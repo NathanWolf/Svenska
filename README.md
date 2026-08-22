@@ -1,0 +1,2 @@
+# Svenska
+På Svenska, tack
