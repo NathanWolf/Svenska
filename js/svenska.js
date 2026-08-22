@@ -158,6 +158,7 @@ class Svenska {
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: phrase.text,
                 artist: 'Swedish Phrases',
+                artwork: [{ src: 'https://svenska.elmakers.com/images/flag-sv.png' }]
             });
             navigator.mediaSession.setActionHandler('play', () => audio.play());
             navigator.mediaSession.setActionHandler('pause', () => audio.pause());
