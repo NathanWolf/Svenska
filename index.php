@@ -28,6 +28,9 @@ require_once('data/version.inc.php');
             <div id="phrase">
 
             </div>
+            <div id="original">
+
+            </div>
         </div>
         <div id="start" style="display: none">
             Click to Start

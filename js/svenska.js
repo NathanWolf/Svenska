@@ -7,6 +7,7 @@ class Svenska {
     #audio = new Audio();
 
     #phraseDisplay = document.getElementById('phrase');
+    #originalDisplay = document.getElementById('original');
     #startDisplay = document.getElementById('start');
     #lessonDisplay = document.getElementById('lesson');
     #loadingDisplay = document.getElementById('loading');
@@ -62,13 +63,10 @@ class Svenska {
         this.#startDisplay.style.display = 'none';
         this.#lessonDisplay.style.display = 'flex';
         this.#playing = true;
-        this.#current = 0;
         this.#showNext();
     }
 
     stop() {
-        this.#startDisplay.style.display = 'flex';
-        this.#lessonDisplay.style.display = 'none';
         this.#audio.pause();
         this.#playing = false;
     }
@@ -82,6 +80,7 @@ class Svenska {
         const phrase = this.#phrases[this.#current];
         this.#current++;
         this.#phraseDisplay.innerText = phrase.translation.text;
+        this.#originalDisplay.innerText = phrase.text;
         this.#playPhrase(phrase.translation.id);
     }
 
