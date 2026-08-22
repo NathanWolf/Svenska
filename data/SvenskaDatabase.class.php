@@ -127,11 +127,32 @@ class SvenskaDatabase extends Database {
     }
 
     public function getPhrases() {
-        return $this->getAll('phrase');
+        $phrases = $this->getAll('phrase');
+        return $this->index($phrases);
     }
 
     public function getPhrase($phraseId) {
         return $this->get('phrase', $phraseId);
+    }
+
+    public function getLanguagePhrases($languageId) {
+        $phrases = $this->getMultiple('phrase', $languageId, 'language_id');
+        return $this->index($phrases);
+    }
+
+    public function getCategories() {
+        $categories = $this->getAll('category');
+        return $this->index($categories);
+    }
+
+    public function getCategoryNames($languageId) {
+        $names = $this->getMultiple('category_name', $languageId, 'language_id');
+        return $this->index($names, 'category_id');
+    }
+
+    public function getTranslations() {
+        $translations = $this->getAll('translation');
+        return $this->multiIndex($translations, 'from_phrase_id', 'to_phrase_id');
     }
 
     public function getAudio($phraseId, $voiceId, $speed) {
