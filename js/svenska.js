@@ -22,7 +22,7 @@ class Svenska {
         this.#startDisplay.addEventListener('click', function() { svenska.start(); });
         this.#lessonDisplay.addEventListener('click', function() { svenska.stop(); });
         this.#audio.addEventListener('ended', () => {
-            svenska.#showNext();
+            svenska.next();
         });
     }
 
@@ -63,7 +63,7 @@ class Svenska {
         this.#startDisplay.style.display = 'none';
         this.#lessonDisplay.style.display = 'flex';
         this.#playing = true;
-        this.#showNext();
+        this.continue();
     }
 
     stop() {
@@ -71,15 +71,18 @@ class Svenska {
         this.#playing = false;
     }
 
-    #showNext() {
-        if (!this.#loaded || !this.#phrases || !this.#playing) return;
-
+    next() {
+        this.#current++;
         if (this.#current >= this.#phrases.length) {
             this.#current = 0;
         }
-        const phrase = this.#phrases[this.#current];
-        this.#current++;
+        this.continue();
+    }
 
+    continue() {
+        if (!this.#loaded || !this.#phrases || !this.#playing) return;
+
+        const phrase = this.#phrases[this.#current];
         this.#phraseDisplay.innerHTML = phrase.translation.text;
         this.#originalDisplay.innerText = phrase.text;
         this.#playPhrase(phrase);

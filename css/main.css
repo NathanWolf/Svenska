@@ -64,8 +64,8 @@ body {
 #loading, #start {
     text-align: center;
     justify-content: center;
-
-    font-size: clamp(1.5rem, 8vw, 4rem);
+    display: flex;
+    align-items: center;
 }
 
 #original {
@@ -77,4 +77,41 @@ body {
 
 .active {
     color: var(--active-text-color);
+}
+
+.spinner {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 4px solid rgba(255, 255, 255, 0.15);
+    border-top-color: #4fc3f7;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.play-icon {
+    width: 0;
+    height: 0;
+    /* A triangle is just a box with zero width/height and asymmetric
+       transparent borders -- the visible "wedge" is whichever border
+       side isn't transparent. Here, left border is solid, forming a
+       triangle pointing right. */
+    border-top: 40px solid transparent;
+    border-bottom: 40px solid transparent;
+    border-left: 64px solid rgba(255, 255, 255, 0.3); /* semi-transparent white */
+
+    /* Optical centering: a play triangle's visual "center of mass" sits
+       left of its bounding box center, so nudge it right slightly to
+       look properly centered to the eye. */
+    margin-left: 8px;
+
+    cursor: pointer;
+    transition: border-left-color 0.15s ease;
+}
+
+.play-icon:hover {
+    border-left-color: rgba(255, 255, 255, 0.5); /* brighten slightly on hover */
 }

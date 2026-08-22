@@ -35,10 +35,10 @@ require_once('data/version.inc.php');
             </div>
         </div>
         <div id="start" style="display: none">
-            Click to Start
+            <div class="play-icon"></div>
         </div>
         <div id="loading">
-            Loading
+            <div class="spinner"></div>
         </div>
     </div>
 </body>
