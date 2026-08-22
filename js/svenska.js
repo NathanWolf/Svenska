@@ -99,6 +99,10 @@ class Svenska {
             return;
         }
 
+        if (!this.#playing) {
+            return;
+        }
+
         const audioBytes = atob(data.audio.audio);
         const byteArray = new Uint8Array(audioBytes.length);
         for (let i = 0; i < audioBytes.length; i++) {
