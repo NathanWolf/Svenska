@@ -1,3 +1,5 @@
 *.iml
 .idea
 vendor
+data/config.inc.php
+data/audio
