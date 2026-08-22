@@ -82,6 +82,22 @@ class Database {
         return null;
     }
 
+    public function getUnique($table, $values) {
+        $filters = array();
+        foreach ($values as $key => $value) {
+            $filters[] = "$key = :$key";
+        }
+        $clause = join(' AND ', $filters);
+        $rows = $this->query("SELECT * FROM $table WHERE $clause", $values);
+        if ($rows) {
+            if (count($rows) > 1) {
+                throw new Exception("Duplicate records in $table for unique query");
+            }
+            return $rows[0];
+        }
+        return null;
+    }
+
     public function getMultiple($table, $id, $idField = 'id') {
         return $this->query("SELECT * FROM $table WHERE $idField=:id", array('id' => $id));
     }
