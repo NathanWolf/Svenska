@@ -73,6 +73,7 @@ body {
     text-align: center;
     font-size: clamp(1.25rem, 6vw, 2rem);
     color: var(--original-text-color);
+    margin-top: 1em;
 }
 
 .active {
@@ -114,4 +115,35 @@ body {
 
 .play-icon:hover {
     border-left-color: rgba(255, 255, 255, 0.5); /* brighten slightly on hover */
+}
+
+.pause-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.pause-icon span {
+    width: 16px;   /* two bars + gap = 16+16+16 = 48px total width */
+    height: 48px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+    transition: background 0.15s ease;
+}
+
+.pause-icon:hover span {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+#toolbar {
+    padding: 1em;
+    text-align: center;
+    color: var(--original-text-color);
+}
+
+#controls {
+    font-size: clamp(1.25rem, 6vw, 2rem);
+    height: 48px;
 }

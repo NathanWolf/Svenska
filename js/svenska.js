@@ -11,6 +11,7 @@ class Svenska {
     #startDisplay = document.getElementById('start');
     #lessonDisplay = document.getElementById('lesson');
     #loadingDisplay = document.getElementById('loading');
+    #controlsDisplay = document.getElementById('controls');
 
     onInternalError(msg, url, line, col, error) {
         alert("An internal error occurred. Press OK to reload.\n\nDetails: " + msg + "\n" + error + "\n\n" + url + ":" + line + ":" + col);
@@ -20,7 +21,7 @@ class Svenska {
     register() {
         let svenska = this;
         this.#startDisplay.addEventListener('click', function() { svenska.start(); });
-        this.#lessonDisplay.addEventListener('click', function() { svenska.stop(); });
+        this.#lessonDisplay.addEventListener('click', function() { svenska.toggle(); });
         this.#audio.addEventListener('ended', () => {
             svenska.next();
         });
@@ -59,6 +60,14 @@ class Svenska {
         this.#startDisplay.style.display = 'flex';
     }
 
+    toggle() {
+        if (this.#playing) {
+            this.pause();
+        } else {
+            this.play();
+        }
+    }
+
     start() {
         this.#startDisplay.style.display = 'none';
         this.#lessonDisplay.style.display = 'flex';
@@ -66,9 +75,20 @@ class Svenska {
         this.continue();
     }
 
-    stop() {
+    play() {
+        if (!this.#loaded || this.#audio == null) return;
+
+        this.#playing = true;
+        this.#audio.play();
+        this.#controlsDisplay.style.visibility = 'hidden';
+    }
+
+    pause() {
+        if (!this.#loaded || this.#audio == null) return;
+
         this.#audio.pause();
         this.#playing = false;
+        this.#controlsDisplay.style.visibility = 'visible';
     }
 
     next() {
@@ -157,14 +177,15 @@ class Svenska {
             });
         }
 
+        let svenska = this;
         if ('mediaSession' in navigator) {
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: phrase.text,
                 artist: 'Swedish Phrases',
                 artwork: [{ src: 'https://svenska.elmakers.com/images/flag-sv.png' }]
             });
-            navigator.mediaSession.setActionHandler('play', () => audio.play());
-            navigator.mediaSession.setActionHandler('pause', () => audio.pause());
+            navigator.mediaSession.setActionHandler('play', () => svenska.play());
+            navigator.mediaSession.setActionHandler('pause', () => svenska.pause());
         }
 
         const blob = new Blob([byteArray], { type: 'audio/mpeg' });
