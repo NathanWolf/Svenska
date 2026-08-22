@@ -1,10 +1,11 @@
 <?php
 header("Content-Type: application/json");
-use com\elmakers\svenska\SvenskaDatabase;
 
 require_once 'SvenskaDatabase.class.php';
 require_once 'utilities.inc.php';
 require_once 'version.inc.php';
+
+use com\elmakers\svenska\SvenskaDatabase;
 
 try {
     $db = new SvenskaDatabase();

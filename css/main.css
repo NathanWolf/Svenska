@@ -14,7 +14,7 @@ html,body {
 }
 
 body {
-    disply: flex;
+    display: flex;
 
     background: var(--background-color);
     overscroll-behavior-y: none;
@@ -36,7 +36,7 @@ body {
     overflow: hidden;
 }
 
-#lesson, #loading {
+#lesson, #loading, #start {
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -46,13 +46,15 @@ body {
     display: flex;
     flex: 1;
     flex-direction: column;
-
-    cursor: pointer;
-    text-align: center;
-    justify-content: center;
 }
 
-#loading {
+#start {
+    cursor: pointer;
+}
+
+#loading, #start, #phrase {
     text-align: center;
     justify-content: center;
+
+    font-size: clamp(1.5rem, 8vw, 4rem);
 }

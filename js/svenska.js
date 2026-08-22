@@ -1,21 +1,28 @@
 class Svenska {
     #loaded = false;
+    #playing = false;
     #phrases = null;
     #current = 0;
     #categories = null;
+    #audio = new Audio();
 
     #phraseDisplay = document.getElementById('phrase');
+    #startDisplay = document.getElementById('start');
     #lessonDisplay = document.getElementById('lesson');
     #loadingDisplay = document.getElementById('loading');
 
     onInternalError(msg, url, line, col, error) {
-        alert("An internal error occurred. Press OK to reload.\n\nDetails: " + msg + "\n\n" + url + ":" + line + ":" + col);
+        alert("An internal error occurred. Press OK to reload.\n\nDetails: " + msg + "\n" + error + "\n\n" + url + ":" + line + ":" + col);
         location.reload();
     }
 
     register() {
         let svenska = this;
-        this.#phraseDisplay.addEventListener('click', function() { svenska.showNext(); });
+        this.#startDisplay.addEventListener('click', function() { svenska.start(); });
+        this.#lessonDisplay.addEventListener('click', function() { svenska.stop(); });
+        this.#audio.addEventListener('ended', () => {
+            svenska.#showNext();
+        });
     }
 
     #request(url, callback) {
@@ -48,13 +55,26 @@ class Svenska {
         this.#categories = data.categories;
         this.#loaded = true;
         this.#loadingDisplay.style.display = 'none';
-        this.#lessonDisplay.style.display = 'flex';
-
-        this.showNext();
+        this.#startDisplay.style.display = 'flex';
     }
 
-    showNext() {
-        if (!this.#loaded || this.#phrases.length == 0) return;
+    start() {
+        this.#startDisplay.style.display = 'none';
+        this.#lessonDisplay.style.display = 'flex';
+        this.#playing = true;
+        this.#current = 0;
+        this.#showNext();
+    }
+
+    stop() {
+        this.#startDisplay.style.display = 'flex';
+        this.#lessonDisplay.style.display = 'none';
+        this.#audio.pause();
+        this.#playing = false;
+    }
+
+    #showNext() {
+        if (!this.#loaded || !this.#phrases || !this.#playing) return;
 
         if (this.#current >= this.#phrases.length) {
             this.#current = 0;
@@ -62,6 +82,31 @@ class Svenska {
         const phrase = this.#phrases[this.#current];
         this.#current++;
         this.#phraseDisplay.innerText = phrase.translation.text;
-        // document.getElementById('category').innerHTML = this.#categories[phrase.category];
+        this.#playPhrase(phrase.translation.id);
+    }
+
+    #playPhrase(id) {
+        const svenska = this;
+        let url = 'data/audio.php?phrase=' + id;
+        this.#request(url, function() {
+            svenska.#processAudio(this.response);
+        });
+    }
+
+    #processAudio(data) {
+        if (!data.success) {
+            alert("Failed to load audio: " + data.message);
+            return;
+        }
+
+        const audioBytes = atob(data.audio.audio);
+        const byteArray = new Uint8Array(audioBytes.length);
+        for (let i = 0; i < audioBytes.length; i++) {
+            byteArray[i] = audioBytes.charCodeAt(i);
+        }
+        const blob = new Blob([byteArray], { type: 'audio/mpeg' });
+        this.#audio.src = URL.createObjectURL(blob);
+        this.#audio.currentTime = 0;
+        this.#audio.play();
     }
 }

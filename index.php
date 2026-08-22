@@ -3,7 +3,7 @@
 require_once('data/version.inc.php');
 
 ?>
-<html>
+<html lang="en-us">
     <head>
         <title>På Svenska, Tack!</title>
         <meta name="viewport" content="width=device-width,initial-scale=0.5,maximum-scale=0.5,user-scalable=no"/>
@@ -17,7 +17,7 @@ require_once('data/version.inc.php');
                 let svenka = new Svenska();
                 svenka.register();
                 svenka.load();
-                _svenska = sveksa;
+                _svenska = svenka;
             };
             window.onerror = function(msg, url, line, col, error) { _svenska.onInternalError(msg, url, line, col, error); };
         </script>
@@ -26,8 +26,11 @@ require_once('data/version.inc.php');
     <div class="main">
         <div id="lesson" style="display: none">
             <div id="phrase">
-                
+
             </div>
+        </div>
+        <div id="start" style="display: none">
+            Click to Start
         </div>
         <div id="loading">
             Loading

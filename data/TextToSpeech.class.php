@@ -52,7 +52,9 @@ class TextToSpeech {
             }
             $audio['audio'] = $audioBinary;
             $filePath = rtrim($this->cacheDir, '/') . '/' . $audio['id'] . '.mp3';
-            file_put_contents($filePath, $audioBinary);
+            if (!file_put_contents($filePath, $audioBinary)) {
+                throw new Exception("Could not write to file: " . $filePath);
+            }
         } else {
             $filePath = rtrim($this->cacheDir, '/') . '/' . $audio['id'] . '.mp3';
             if (!file_exists($filePath)) {
@@ -60,6 +62,7 @@ class TextToSpeech {
             }
             $audio['audio'] = file_get_contents($filePath);
         }
+        $audio['audio'] = base64_encode($audio['audio']);
         return $audio;
     }
 
