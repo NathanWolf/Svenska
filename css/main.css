@@ -1,0 +1,40 @@
+:root {
+    --background-color: #FFFADF;
+    --text-color: black;
+    --scrollbar-inner-color: #C1C1C1;
+    --scrollbar-outer-color: #FAFAFA;
+}
+
+html,body {
+    margin: 0;
+    padding: 0;
+    height: 100dvh;
+    scrollbar-color: var(--scrollbar-inner-color) var(--scrollbar-outer-color);
+    scrollbar-width: thin;
+    overflow: hidden;
+}
+
+body {
+    background: var(--background-color);
+    overscroll-behavior-y: none;
+    user-select: none;
+    color: var(--text-color);
+}
+
+.main {
+    display: flex;
+    justify-content: center; /* horizontal */
+    align-items: center;     /* vertical */
+    height: 100vh;
+    background: #222;
+    color: #fff;
+    font-family: sans-serif;
+    font-size: 1.5rem;
+    overflow: hidden;
+}
+
+.welcome {
+    flex: 1;
+    text-align: center;
+    justify-content: center;
+}
