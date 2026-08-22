@@ -37,7 +37,7 @@ class SvenskaDatabase extends Database {
     }
 
     private function generateToken() {
-        return bin2hex(random_bytes(16));;
+        return bin2hex(random_bytes(16));
     }
 
     public function login($email, $password, $address) {
@@ -94,7 +94,6 @@ class SvenskaDatabase extends Database {
 
     private function processUser(&$user) {
         if ($user) {
-            $user['properties'] = $this->getUserProperties($user['id']);
             if ($user['chat']) {
                 $user['chat'] = json_decode($user['chat'], true);
             }
@@ -156,7 +155,10 @@ class SvenskaDatabase extends Database {
     }
 
     public function getAudio($phraseId, $voiceId, $speed) {
-        return $this->queryOne('audio', 'phrase_id=:phrase AND voice_id=:voice AND speed=:speed', array('phrase' => $phraseId, 'voice' => $voiceId, 'speed' => $speed));
+        $audio = $this->queryOne('audio', 'phrase_id=:phrase AND voice_id=:voice AND speed=:speed', array('phrase' => $phraseId, 'voice' => $voiceId, 'speed' => $speed));
+        if ($audio['alignment']) $audio['alignment'] = json_decode($audio['alignment'], true);
+        if ($audio['normalized_alignment']) $audio['normalized_alignment'] = json_decode($audio['normalized_alignment'], true);
+        return $audio;
     }
 
     public function insertAudio($phraseId, $voiceId, $speed, $alignment, $normalizedAlignment) {

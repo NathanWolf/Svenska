@@ -4,6 +4,7 @@
     --scrollbar-inner-color: #C1C1C1;
     --scrollbar-outer-color: #FAFAFA;
     --original-text-color: #AFAA9F;
+    --active-text-color: #4FFAFF;
 }
 
 html,body {
@@ -43,13 +44,17 @@ body {
     flex-direction: column;
 }
 
-#phrase {
+#translation {
     display: flex;
     flex: 1;
     flex-direction: column;
     text-align: center;
     justify-content: end;
     font-size: clamp(1.5rem, 8vw, 4rem);
+}
+
+#phrase {
+
 }
 
 #lesson, #start {
@@ -68,4 +73,8 @@ body {
     text-align: center;
     font-size: clamp(1.25rem, 6vw, 2rem);
     color: var(--original-text-color);
+}
+
+.active {
+    color: var(--active-text-color);
 }

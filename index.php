@@ -25,8 +25,10 @@ require_once('data/version.inc.php');
 <body>
     <div class="main">
         <div id="lesson" style="display: none">
-            <div id="phrase">
+            <div id="translation">
+                <div id="phrase">
 
+                </div>
             </div>
             <div id="original">
 

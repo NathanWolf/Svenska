@@ -79,20 +79,21 @@ class Svenska {
         }
         const phrase = this.#phrases[this.#current];
         this.#current++;
-        this.#phraseDisplay.innerText = phrase.translation.text;
+
+        this.#phraseDisplay.innerHTML = phrase.translation.text;
         this.#originalDisplay.innerText = phrase.text;
-        this.#playPhrase(phrase.translation.id);
+        this.#playPhrase(phrase);
     }
 
-    #playPhrase(id) {
+    #playPhrase(phrase) {
         const svenska = this;
-        let url = 'data/audio.php?phrase=' + id;
+        let url = 'data/audio.php?phrase=' + phrase.translation.id;
         this.#request(url, function() {
-            svenska.#processAudio(this.response);
+            svenska.#processAudio(this.response, phrase);
         });
     }
 
-    #processAudio(data) {
+    #processAudio(data, phrase) {
         if (!data.success) {
             alert("Failed to load audio: " + data.message);
             return;
@@ -107,7 +108,65 @@ class Svenska {
         for (let i = 0; i < audioBytes.length; i++) {
             byteArray[i] = audioBytes.charCodeAt(i);
         }
+
+        if (data.audio.alignment != null) {
+            let alignment = data.audio.alignment;
+
+            // Group characters into words by splitting on spaces, tracking each
+            // word's overall start/end time from its first/last character.
+            const words = [];
+            let current = { text: '', start: null, end: null };
+
+            alignment.characters.forEach((ch, i) => {
+                if (ch === ' ') {
+                    if (current.text) words.push(current);
+                    current = { text: '', start: null, end: null };
+                } else {
+                    if (current.start === null) {
+                        current.start = alignment.character_start_times_seconds[i];
+                    }
+                    current.end = alignment.character_end_times_seconds[i];
+                    current.text += ch;
+                }
+            });
+            if (current.text) {
+                words.push(current);
+            }
+
+            this.#phraseDisplay.innerHTML = '';
+            const wordEls = words.map(w => {
+                const span = document.createElement('span');
+                span.className = 'word';
+                span.textContent = w.text;
+                span.dataset.start = w.start;
+                span.dataset.end = w.end;
+                this.#phraseDisplay.appendChild(span);
+                this.#phraseDisplay.appendChild(document.createTextNode(' '));
+                return span;
+            });
+
+            this.#audio.addEventListener('timeupdate', () => {
+                const t = this.#audio.currentTime;
+                wordEls.forEach(span => {
+                    const isActive = t >= span.dataset.start && t <= span.dataset.end;
+                    span.classList.toggle('active', isActive);
+                });
+            });
+        }
+
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: phrase.text,
+                artist: 'Swedish Phrases',
+            });
+            navigator.mediaSession.setActionHandler('play', () => audio.play());
+            navigator.mediaSession.setActionHandler('pause', () => audio.pause());
+        }
+
         const blob = new Blob([byteArray], { type: 'audio/mpeg' });
+        if (this.#audio.src != null) {
+            URL.revokeObjectURL(this.#audio.src);
+        }
         this.#audio.src = URL.createObjectURL(blob);
         this.#audio.currentTime = 0;
         this.#audio.play();
