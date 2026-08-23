@@ -37,14 +37,14 @@ require_once('data/version.inc.php');
             </div>
             <div id="toolbar">
                 <div id="controls" style="visibility: hidden">
-                    <span id="button_previous" class="icon-button icon-button-small">&#x25C0;</span>
-                    <span id="button_paused" class="icon-button">&#x23F8;</span>
-                    <span id="button_next" class="icon-button icon-button-small">&#x25B6;</span>
+                    <span id="button_previous" class="icon-button icon-button-small">&#x25C0;&#xFE0E;</span>
+                    <span id="button_paused" class="icon-button">&#x23F8;&#xFE0E;</span>
+                    <span id="button_next" class="icon-button icon-button-small">&#x25B6;&#xFE0E;</span>
                 </div>
             </div>
         </div>
         <div id="start" style="display: none">
-            <span class="icon-button icon-button-large">&#x25B6;</span>
+            <span class="icon-button icon-button-large">&#x25B6;&#xFE0E;</span>
         </div>
         <div id="loading">
             <div class="spinner"></div>
