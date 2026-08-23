@@ -3,6 +3,7 @@ class Svenska {
     #playing = false;
     #dirty = false;
     #phrases = null;
+    #playlist = [];
     #current = 0;
     #categories = null;
     #shuffle = false;
@@ -103,6 +104,9 @@ class Svenska {
             this.#shuffleButton.classList.remove('button_active');
         } else {
             this.#shuffleButton.classList.add('button_active');
+            this.shuffle();
+            this.#current = 0;
+            this.continue();
         }
         this.#shuffle = !this.#shuffle;
     }
@@ -116,14 +120,26 @@ class Svenska {
     }
 
     startCategory(categoryId) {
-
+        this.#playlist = [];
+        for (let i = 0; i < this.#phrases.length; i++) {
+            let phrase = this.#phrases[i];
+            if (phrase.category_id === categoryId) {
+                this.#playlist.push(phrase);
+            }
+        }
+        this.#start();
     }
 
     startAll() {
-        this.start();
+        this.#playlist = [...this.#phrases];
+        this.#start();
     }
 
-    start() {
+    shuffle() {
+        this.#playlist.sort(() => Math.random() - 0.5);
+    }
+
+    #start() {
         this.#lessonDisplay.style.display = 'flex';
         this.#categoriesDisplay.style.display = 'none';
         this.#playing = true;
@@ -161,7 +177,7 @@ class Svenska {
 
     next() {
         this.#current++;
-        if (this.#current >= this.#phrases.length) {
+        if (this.#current >= this.#playlist.length) {
             this.#current = 0;
         }
         this.continue();
@@ -170,15 +186,15 @@ class Svenska {
     previous() {
         this.#current--;
         if (this.#current < 0) {
-            this.#current = this.#phrases.length - 1;
+            this.#current = this.#playlist.length - 1;
         }
         this.continue();
     }
 
     continue() {
-        if (!this.#loaded || !this.#phrases) return;
+        if (!this.#loaded || this.#playlist.length === 0) return;
 
-        const phrase = this.#phrases[this.#current];
+        const phrase = this.#playlist[this.#current];
         this.#phraseDisplay.innerHTML = phrase.translation.text;
         this.#originalDisplay.innerText = phrase.text;
 
