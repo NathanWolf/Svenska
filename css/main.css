@@ -6,7 +6,9 @@
     --original-text-color: #AFAA9F;
     --active-text-color: #4FFAFF;
     --highlight-color: #4FFAFF;
-    --highlight-background-color: #101010;
+    --highlight-background-color: #404040;
+    --active-button-color: #4FFAFF;
+    --active-button-background-color: #101010;
     --separator-color: #A0A0A0;
 }
 
@@ -82,10 +84,6 @@ body {
     margin-top: 1em;
 }
 
-#phrase {
-
-}
-
 .active {
     color: var(--active-text-color);
 }
@@ -109,8 +107,8 @@ body {
     cursor: pointer;
     transition: color 0.15s ease;
     user-select: none;
-    padding-left: 24px;
-    padding-right: 24px;
+    padding-left: 8px;
+    padding-right: 8px;
 }
 
 .icon-button-small {
@@ -135,19 +133,9 @@ body {
     align-items: center;
 }
 
-#button_back, #button_repeat {
-    grid-column: 1;
-    justify-self: start;
-}
-
-#button_shuffle {
-    grid-column: 3;
-    justify-self: end;
-}
-
 .button_active {
-    background-color: var(--highlight-background-color);
-    color: var(--highlight-color);
+    background-color: var(--active-button-background-color);
+    color: var(--active-button-color);
 }
 
 .center_group {
@@ -155,6 +143,19 @@ body {
     display: flex;
     gap: 24px;
     align-items: center;
+    white-space: nowrap;
+}
+
+.left_group {
+    grid-column: 1;
+    justify-self: left;
+    white-space: nowrap;
+}
+
+.right_group {
+    grid-column: 3;
+    justify-self: right;
+    white-space: nowrap;
 }
 
 li.category {
