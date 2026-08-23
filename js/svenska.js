@@ -7,6 +7,7 @@ class Svenska {
     #current = 0;
     #categories = null;
     #shuffle = false;
+    #repeat = false;
     #audio = new Audio();
 
     #phraseDisplay = document.getElementById('phrase');
@@ -18,9 +19,11 @@ class Svenska {
     #previousButton = document.getElementById('button_previous');
     #backButton = document.getElementById('button_back');
     #shuffleButton = document.getElementById('button_shuffle');
+    #repeatButton = document.getElementById('button_repeat');
     #lessonDisplay = document.getElementById('lesson');
     #loadingDisplay = document.getElementById('loading');
-    #controlsDisplay = document.getElementById('controls');
+    #controlsTopDisplay = document.getElementById('controls_top');
+    #controlsBottomDisplay = document.getElementById('controls_bottom');
 
     onInternalError(msg, url, line, col, error) {
         alert("An internal error occurred. Press OK to reload.\n\nDetails: " + msg + "\n" + error + "\n\n" + url + ":" + line + ":" + col);
@@ -32,11 +35,12 @@ class Svenska {
         this.#pausedButton.addEventListener('click', function() { svenska.play(); });
         this.#nextButton.addEventListener('click', function() { svenska.next(); });
         this.#shuffleButton.addEventListener('click', function() { svenska.toggleShuffle(); });
+        this.#repeatButton.addEventListener('click', function() { svenska.toggleRepeat(); });
         this.#backButton.addEventListener('click', function() { svenska.showCategories(); });
         this.#previousButton.addEventListener('click', function() { svenska.previous(); });
         this.#translationDisplay.addEventListener('click', function() { svenska.toggle(); });
         this.#audio.addEventListener('ended', () => {
-            svenska.next();
+            svenska.checkNext();
         });
     }
 
@@ -125,15 +129,24 @@ class Svenska {
     }
 
     toggleShuffle() {
+        this.#shuffle = !this.#shuffle;
         if (this.#shuffle) {
-            this.#shuffleButton.classList.remove('button_active');
-        } else {
             this.#shuffleButton.classList.add('button_active');
             this.shuffle();
             this.#current = 0;
             this.continue();
+        } else {
+            this.#shuffleButton.classList.remove('button_active');
         }
-        this.#shuffle = !this.#shuffle;
+    }
+
+    toggleRepeat() {
+        this.#repeat = !this.#repeat;
+        if (this.#repeat) {
+            this.#repeatButton.classList.add('button_active');
+        } else {
+            this.#repeatButton.classList.remove('button_active');
+        }
     }
 
     toggle() {
@@ -205,7 +218,8 @@ class Svenska {
         } else {
             this.#audio.play();
         }
-        this.#controlsDisplay.style.visibility = 'hidden';
+        this.#controlsTopDisplay.style.visibility = 'hidden';
+        this.#controlsBottomDisplay.style.visibility = 'hidden';
     }
 
     stop() {
@@ -213,7 +227,8 @@ class Svenska {
 
         this.#playing = false;
         this.#audio.pause();
-        this.#controlsDisplay.style.visibility = 'hidden';
+        this.#controlsBottomDisplay.style.visibility = 'hidden';
+        this.#controlsTopDisplay.style.visibility = 'hidden';
     }
 
     pause() {
@@ -221,7 +236,16 @@ class Svenska {
 
         this.#audio.pause();
         this.#playing = false;
-        this.#controlsDisplay.style.visibility = 'visible';
+        this.#controlsBottomDisplay.style.visibility = 'visible';
+        this.#controlsTopDisplay.style.visibility = 'visible';
+    }
+
+    checkNext() {
+        if (this.#repeat) {
+            this.continue();
+        } else {
+            this.next();
+        }
     }
 
     next() {

@@ -5,8 +5,8 @@
     --scrollbar-outer-color: #FAFAFA;
     --original-text-color: #AFAA9F;
     --active-text-color: #4FFAFF;
-    --highlight-color: #CFFAFF;
-    --highlight-background-color: #404040;
+    --highlight-color: #4FFAFF;
+    --highlight-background-color: #101010;
     --separator-color: #A0A0A0;
 }
 
@@ -62,6 +62,7 @@ body {
     display: flex;
     flex: 1;
     flex-direction: column;
+    margin: 16px;
 }
 
 #translation_to {
@@ -103,32 +104,30 @@ body {
 }
 
 .icon-button {
-    font-size: 10vh;
+    font-size: 6vh;
     color: rgba(255, 255, 255, 0.3);
     cursor: pointer;
     transition: color 0.15s ease;
     user-select: none;
+    padding-left: 24px;
+    padding-right: 24px;
 }
 
-.icon-button:hover {
-    color: rgba(255, 255, 255, 0.5);
+.icon-button-small {
+    font-size: 5vh;
 }
 
 .icon-button-large {
     font-size: clamp(20rem, 20vw, 6rem);
 }
 
-.icon-button-small {
-    font-size: 8vh;
-}
-
-#toolbar {
+.toolbar {
     padding: 8px;
     text-align: center;
     color: var(--original-text-color);
 }
 
-#controls {
+.controls {
     font-size: clamp(1.25rem, 6vw, 2rem);
     height: 10vh;
     display: grid;
@@ -136,7 +135,7 @@ body {
     align-items: center;
 }
 
-#button_back {
+#button_back, #button_repeat {
     grid-column: 1;
     justify-self: start;
 }
@@ -171,9 +170,15 @@ li.category {
     border-top: 1px solid var(--separator-color);
 }
 
-li.category:hover {
-    background-color: var(--highlight-background-color);
-    color: var(--highlight-color);
+@media (hover: hover) {
+    .icon-button:hover {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    li.category:hover {
+        background-color: var(--highlight-background-color);
+        color: var(--highlight-color);
+    }
 }
 
 #categories {

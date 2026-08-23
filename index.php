@@ -25,6 +25,13 @@ require_once('data/version.inc.php');
 <body>
     <div id="main">
         <div id="lesson" style="display: none">
+            <div class="toolbar">
+                <div class="controls" id="controls_top" style="visibility: hidden">
+                    <span id="button_back" class="icon-button">X</span>
+                    <div class="center_group">
+                    </div>
+                </div>
+            </div>
             <div id="translation">
                 <div id="translation_to">
                     <div id="phrase">
@@ -35,9 +42,9 @@ require_once('data/version.inc.php');
 
                 </div>
             </div>
-            <div id="toolbar">
-                <div id="controls" style="visibility: hidden">
-                    <span id="button_back" class="icon-button">&#x27F2;&#xFE0E;</span>
+            <div class="toolbar">
+                <div class="controls" id="controls_bottom" style="visibility: hidden">
+                    <span id="button_repeat" class="icon-button">&#x27F2;&#xFE0E;</span>
                     <div class="center_group">
                         <span id="button_previous" class="icon-button icon-button-small">&#x25C0;&#xFE0E;</span>
                         <span id="button_paused" class="icon-button">&#x23F8;&#xFE0E;</span>
