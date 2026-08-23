@@ -43,6 +43,7 @@ require_once('data/version.inc.php');
                         <span id="button_paused" class="icon-button">&#x23F8;&#xFE0E;</span>
                         <span id="button_next" class="icon-button icon-button-small">&#x25B6;&#xFE0E;</span>
                     </div>
+                    <span id="button_shuffle" class="icon-button">&#x2928;&#xFE0E;</span>
                 </div>
             </div>
         </div>

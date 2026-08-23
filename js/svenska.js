@@ -5,6 +5,7 @@ class Svenska {
     #phrases = null;
     #current = 0;
     #categories = null;
+    #shuffle = false;
     #audio = new Audio();
 
     #phraseDisplay = document.getElementById('phrase');
@@ -15,6 +16,7 @@ class Svenska {
     #nextButton = document.getElementById('button_next');
     #previousButton = document.getElementById('button_previous');
     #backButton = document.getElementById('button_back');
+    #shuffleButton = document.getElementById('button_shuffle');
     #lessonDisplay = document.getElementById('lesson');
     #loadingDisplay = document.getElementById('loading');
     #controlsDisplay = document.getElementById('controls');
@@ -28,6 +30,7 @@ class Svenska {
         let svenska = this;
         this.#pausedButton.addEventListener('click', function() { svenska.play(); });
         this.#nextButton.addEventListener('click', function() { svenska.next(); });
+        this.#shuffleButton.addEventListener('click', function() { svenska.toggleShuffle(); });
         this.#backButton.addEventListener('click', function() { svenska.showCategories(); });
         this.#previousButton.addEventListener('click', function() { svenska.previous(); });
         this.#translationDisplay.addEventListener('click', function() { svenska.toggle(); });
@@ -93,6 +96,15 @@ class Svenska {
 
         this.#lessonDisplay.style.display = 'none';
         categoryList.style.display = 'flex';
+    }
+
+    toggleShuffle() {
+        if (this.#shuffle) {
+            this.#shuffleButton.classList.remove('button_active');
+        } else {
+            this.#shuffleButton.classList.add('button_active');
+        }
+        this.#shuffle = !this.#shuffle;
     }
 
     toggle() {
