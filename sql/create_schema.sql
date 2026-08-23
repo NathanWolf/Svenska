@@ -118,3 +118,27 @@ CREATE TABLE audio (
     constraint audio_phrase_id_fk FOREIGN KEY (phrase_id) REFERENCES phrase(id),
     constraint audio_voice_id_fk FOREIGN KEY (voice_id) REFERENCES voice(id)
 );
+
+-- Modifications after creation
+
+alter table category
+    add priority int default 0 not null;
+
+alter table translation
+    drop foreign key translation_from_phrase_id_fk;
+
+alter table translation
+    add constraint translation_from_phrase_id_fk
+        foreign key (from_phrase_id) references phrase (id)
+            on delete cascade;
+
+alter table translation
+    drop foreign key translation_to_phrase_id_fk;
+
+alter table translation
+    add constraint translation_to_phrase_id_fk
+        foreign key (to_phrase_id) references phrase (id)
+            on delete cascade;
+
+
+

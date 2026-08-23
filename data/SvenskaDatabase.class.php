@@ -140,7 +140,7 @@ class SvenskaDatabase extends Database {
     }
 
     public function getCategories() {
-        $categories = $this->getAll('category');
+        $categories = $this->getAll('category', 'priority');
         return $this->index($categories);
     }
 
