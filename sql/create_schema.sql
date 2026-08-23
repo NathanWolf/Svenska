@@ -23,7 +23,9 @@ create table user
     admin bool default false,
 
     constraint user_pk
-        primary key (id)
+        primary key (id),
+
+    constraint user_email unique (email)
 );
 
 CREATE TABLE user_token
@@ -46,7 +48,9 @@ CREATE TABLE language (
     name VARCHAR(255) NOT NULL,
     created timestamp not null default CURRENT_TIMESTAMP,
     updated timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+
+    constraint language_name unique (name)
 );
 
 CREATE TABLE category (
@@ -64,7 +68,8 @@ CREATE TABLE category_name (
     updated timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     PRIMARY KEY (category_id, language_id),
     constraint category_name_category_id_fk FOREIGN KEY (category_id) REFERENCES category(id),
-    constraint category_name_language_id_fk FOREIGN KEY (language_id) REFERENCES language(id)
+    constraint category_name_language_id_fk FOREIGN KEY (language_id) REFERENCES language(id),
+    constraint category_language_name unique (language_id, name)
 );
 
 CREATE TABLE phrase (
