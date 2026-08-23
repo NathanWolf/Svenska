@@ -11,7 +11,7 @@ grant all privileges ON svenska.* to 'svenska_admin'@'127.0.0.1';
 
 create table user
 (
-    id VARCHAR(40) DEFAULT (uuid()),
+    id CHAR(36) DEFAULT (uuid()),
     created timestamp not null default CURRENT_TIMESTAMP,
     updated timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     email varchar(255) not null,
@@ -28,11 +28,14 @@ create table user
 
 CREATE TABLE user_token
 (
-    user_id VARCHAR(40) NOT NULL,
+    user_id CHAR(36) NOT NULL,
     token varchar(255) not null,
     remote_address varchar(32) not null,
     created timestamp not null default CURRENT_TIMESTAMP,
     updated timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+
+    constraint user_token_user_id_fk
+        FOREIGN KEY (user_id) REFERENCES user (id),
 
     constraint user_token_pk
         primary key (user_id, token)
@@ -47,59 +50,59 @@ CREATE TABLE language (
 );
 
 CREATE TABLE category (
-    id VARCHAR(40) DEFAULT (uuid()),
+    id CHAR(36) DEFAULT (uuid()),
     created timestamp not null default CURRENT_TIMESTAMP,
     updated timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
 
 CREATE TABLE category_name (
-    category_id VARCHAR(40) DEFAULT (uuid()),
+    category_id CHAR(36) DEFAULT (uuid()),
     language_id varchar(16) NOT NULL,
     name VARCHAR(255) NOT NULL,
     created timestamp not null default CURRENT_TIMESTAMP,
     updated timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     PRIMARY KEY (category_id, language_id),
-    FOREIGN KEY (category_id) REFERENCES category(id),
-    FOREIGN KEY (language_id) REFERENCES language(id)
+    constraint category_name_category_id_fk FOREIGN KEY (category_id) REFERENCES category(id),
+    constraint category_name_language_id_fk FOREIGN KEY (language_id) REFERENCES language(id)
 );
 
 CREATE TABLE phrase (
-    id VARCHAR(40) DEFAULT (uuid()),
+    id CHAR(36) DEFAULT (uuid()),
     language_id varchar(16) NOT NULL,
-    category_id VARCHAR(40) NOT NULL,
+    category_id CHAR(36) NOT NULL,
     text LONGTEXT NOT NULL,
     created timestamp not null default CURRENT_TIMESTAMP,
     updated timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
-    FOREIGN KEY (language_id) REFERENCES language(id),
-    FOREIGN KEY (category_id) REFERENCES category(id)
+    constraint phrase_language_id_fk FOREIGN KEY (language_id) REFERENCES language(id),
+    constraint phrase_category_id_fk FOREIGN KEY (category_id) REFERENCES category(id)
 );
 
 CREATE TABLE translation (
-    from_phrase_id VARCHAR(40),
-    to_phrase_id VARCHAR(40),
+    from_phrase_id CHAR(36),
+    to_phrase_id CHAR(36),
     created timestamp not null default CURRENT_TIMESTAMP,
     updated timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     PRIMARY KEY (from_phrase_id, to_phrase_id),
-    FOREIGN KEY (from_phrase_id) REFERENCES phrase(id),
-    FOREIGN KEY (to_phrase_id) REFERENCES phrase(id)
+    constraint translation_from_phrase_id_fk FOREIGN KEY (from_phrase_id) REFERENCES phrase(id),
+    constraint translation_to_phrase_id_fk FOREIGN KEY (to_phrase_id) REFERENCES phrase(id)
 );
 
 CREATE TABLE voice (
-    id VARCHAR(40) NOT NULL,
+    id CHAR(36) NOT NULL,
     language_id varchar(16) NOT NULL,
     name VARCHAR(255) NOT NULL,
     created timestamp not null default CURRENT_TIMESTAMP,
     updated timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
-    FOREIGN KEY (language_id) REFERENCES language(id)
+    constraint voice_language_id_fk FOREIGN KEY (language_id) REFERENCES language(id)
 );
 
 CREATE TABLE audio (
-    id VARCHAR(40) DEFAULT (uuid()),
-    phrase_id VARCHAR(40),
-    voice_id VARCHAR(40),
+    id CHAR(36) DEFAULT (uuid()),
+    phrase_id CHAR(36),
+    voice_id CHAR(36),
     speed FLOAT NOT NULL DEFAULT 1.0,
     alignment JSON NULL,
     normalized_alignment JSON NULL,
@@ -107,6 +110,6 @@ CREATE TABLE audio (
     updated timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     UNIQUE KEY (phrase_id, voice_id, speed),
-    FOREIGN KEY (phrase_id) REFERENCES phrase(id),
-    FOREIGN KEY (voice_id) REFERENCES voice(id)
+    constraint audio_phrase_id_fk FOREIGN KEY (phrase_id) REFERENCES phrase(id),
+    constraint audio_voice_id_fk FOREIGN KEY (voice_id) REFERENCES voice(id)
 );
