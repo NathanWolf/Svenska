@@ -7,6 +7,7 @@
     --active-text-color: #4FFAFF;
     --highlight-color: #CFFAFF;
     --highlight-background-color: #404040;
+    --separator-color: #A0A0A0;
 }
 
 html,body {
@@ -160,9 +161,14 @@ body {
 li.category {
     list-style: none;
     cursor: pointer;
-    margin-left: 1em;
+    margin-left: 16px;
+    margin-right: 16px;
     font-size: 5vh;
     padding: 8px;
+    line-height: 0.9em;
+    margin-top: 0.5em;
+
+    border-top: 1px solid var(--separator-color);
 }
 
 li.category:hover {
