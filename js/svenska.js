@@ -77,7 +77,7 @@ class Svenska {
         this.stop();
 
         const svenska = this;
-        const categories = this.#categories;
+        const categories = Object.values(this.#categories);
         const categoryList = this.#categoriesDisplay;
         categoryList.innerHTML = '';
 
@@ -121,17 +121,27 @@ class Svenska {
 
     startCategory(categoryId) {
         this.#playlist = [];
-        for (let i = 0; i < this.#phrases.length; i++) {
-            let phrase = this.#phrases[i];
-            if (phrase.category_id === categoryId) {
-                this.#playlist.push(phrase);
-            }
+        let category = this.#categories[categoryId];
+        for (let i = 0; i < category.phrases.length; i++) {
+            this.#playlist.push(this.#phrases[category.phrases[i]]);
+        }
+        if (this.#shuffle) {
+            this.shuffle();
         }
         this.#start();
     }
 
     startAll() {
-        this.#playlist = [...this.#phrases];
+        this.#playlist = [];
+        for (let categoryId in this.#categories) {
+            let category = this.#categories[categoryId];
+            for (let i = 0; i < category.phrases.length; i++) {
+                this.#playlist.push(this.#phrases[category.phrases[i]]);
+            }
+        }
+        if (this.#shuffle) {
+            this.shuffle();
+        }
         this.#start();
     }
 

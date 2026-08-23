@@ -25,7 +25,7 @@ try {
             foreach ($translations[$fromPhrase['id']] as $candidate) {
                 if (isset($toPhrases[$candidate['to_phrase_id']])) {
                     $fromPhrase['translation'] = $toPhrases[$candidate['to_phrase_id']];
-                    $phrases[] = $fromPhrase;
+                    $phrases[$fromPhrase['id']] = $fromPhrase;
                     break;
                 }
             }
@@ -39,13 +39,18 @@ try {
     foreach ($categories as &$category) {
         $category['from_name'] = $fromCategories[$category['id']]['name'] ?? null;
         $category['to_name'] = $toCategories[$category['id']]['name'] ?? null;
+        $category['phrases'] = [];
+    }
+
+    foreach ($phrases as $phrase) {
+        $categories[$phrase['category_id']]['phrases'][] = $phrase['id'];
     }
 
     echo json_encode(array(
         'success' => true,
         'version' => VERSION,
-        'phrases' => array_values($phrases),
-        'categories' => array_values($categories)
+        'phrases' => $phrases,
+        'categories' => $categories
     ));
 } catch (Exception $e) {
     echo json_encode(array(

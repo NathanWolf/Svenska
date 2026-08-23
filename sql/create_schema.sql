@@ -140,5 +140,13 @@ alter table translation
         foreign key (to_phrase_id) references phrase (id)
             on delete cascade;
 
+alter table audio
+    drop foreign key audio_phrase_id_fk;
+
+alter table audio
+    add constraint audio_phrase_id_fk
+        foreign key (phrase_id) references phrase (id)
+            on delete cascade;
+
 
 
