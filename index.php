@@ -23,7 +23,7 @@ require_once('data/version.inc.php');
         </script>
     </head>
 <body>
-    <div class="main">
+    <div id="main">
         <div id="lesson" style="display: none">
             <div id="translation">
                 <div id="translation_to">
@@ -37,14 +37,17 @@ require_once('data/version.inc.php');
             </div>
             <div id="toolbar">
                 <div id="controls" style="visibility: hidden">
-                    <span id="button_previous" class="icon-button icon-button-small">&#x25C0;&#xFE0E;</span>
-                    <span id="button_paused" class="icon-button">&#x23F8;&#xFE0E;</span>
-                    <span id="button_next" class="icon-button icon-button-small">&#x25B6;&#xFE0E;</span>
+                    <span id="button_back" class="icon-button">&#x27F2;&#xFE0E;</span>
+                    <div class="center_group">
+                        <span id="button_previous" class="icon-button icon-button-small">&#x25C0;&#xFE0E;</span>
+                        <span id="button_paused" class="icon-button">&#x23F8;&#xFE0E;</span>
+                        <span id="button_next" class="icon-button icon-button-small">&#x25B6;&#xFE0E;</span>
+                    </div>
                 </div>
             </div>
         </div>
-        <div id="start" style="display: none">
-            <span class="icon-button icon-button-large">&#x25B6;&#xFE0E;</span>
+        <div id="categories" style="display: none">
+
         </div>
         <div id="loading">
             <div class="spinner"></div>

@@ -45,7 +45,7 @@ try {
         'success' => true,
         'version' => VERSION,
         'phrases' => array_values($phrases),
-        'categories' => $categories
+        'categories' => array_values($categories)
     ));
 } catch (Exception $e) {
     echo json_encode(array(

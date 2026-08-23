@@ -5,6 +5,8 @@
     --scrollbar-outer-color: #FAFAFA;
     --original-text-color: #AFAA9F;
     --active-text-color: #4FFAFF;
+    --highlight-color: #CFFAFF;
+    --highlight-background-color: #404040;
 }
 
 html,body {
@@ -27,7 +29,7 @@ body {
     font-size: 1.5rem;
 }
 
-.main {
+#main {
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -38,7 +40,7 @@ body {
     overflow: hidden;
 }
 
-#lesson, #loading, #start {
+#main > div {
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -128,4 +130,36 @@ body {
 #controls {
     font-size: clamp(1.25rem, 6vw, 2rem);
     height: 10vh;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr; /* left spacer | center group | right spacer */
+    align-items: center;
+}
+
+#button_back {
+    grid-column: 1;
+    justify-self: start; /* pin to the left edge of its column */
+}
+
+.center_group {
+    grid-column: 2;
+    display: flex;
+    gap: 24px;
+    align-items: center;
+}
+
+li.category {
+    list-style: none;
+    cursor: pointer;
+    margin-left: 1em;
+    font-size: 5vh;
+    padding: 8px;
+}
+
+li.category:hover {
+    background-color: var(--highlight-background-color);
+    color: var(--highlight-color);
+}
+
+#categories {
+    overflow-y: auto;
 }
