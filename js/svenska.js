@@ -301,6 +301,7 @@ class Svenska {
     }
 
     #playPhrase(phrase) {
+        this.#dirty = true;
         const svenska = this;
         let url = 'data/audio.php?phrase=' + phrase.translation.id;
         this.#request(url, function() {
@@ -317,6 +318,7 @@ class Svenska {
         if (!this.#playing) {
             return;
         }
+        this.#dirty = false;
 
         const audioBytes = atob(data.audio.audio);
         const byteArray = new Uint8Array(audioBytes.length);
