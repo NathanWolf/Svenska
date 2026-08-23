@@ -190,7 +190,7 @@ class Svenska {
         this.#current = 0;
         if (phraseId != null) {
             for (let i = 0; i < this.#playlist.length; i++) {
-                if (this.#playlist[i].id == phraseId) {
+                if (this.#playlist[i].id === phraseId) {
                     this.#current = i;
                     break;
                 }
