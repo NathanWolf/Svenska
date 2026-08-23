@@ -163,6 +163,15 @@ class SvenskaDatabase extends Database {
         return $audio;
     }
 
+    public function getSampleAudio() {
+        $audio = $this->queryOne('audio', '1 limit 1');
+        if ($audio) {
+            if ($audio['alignment']) $audio['alignment'] = json_decode($audio['alignment'], true);
+            if ($audio['normalized_alignment']) $audio['normalized_alignment'] = json_decode($audio['normalized_alignment'], true);
+        }
+        return $audio;
+    }
+
     public function insertAudio($phraseId, $voiceId, $speed, $alignment, $normalizedAlignment) {
         return $this->insert('audio', array('phrase_id' => $phraseId, 'voice_id' => $voiceId, 'speed' => $speed, 'alignment' => $alignment, 'normalized_alignment' => $normalizedAlignment));
     }

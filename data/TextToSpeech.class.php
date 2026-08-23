@@ -33,6 +33,11 @@ class TextToSpeech {
         }
 
         $audio = $this->db->getAudio($phraseId, $this->voiceId, $this->speed);
+        if (_CONFIG['debug']) {
+            if (!$audio || !file_exists(rtrim($this->cacheDir, '/') . '/' . $audio['id'] . '.mp3')) {
+                $audio = $this->db->getSampleAudio();
+            }
+        }
         if (!$audio) {
             $responseBody = $this->generate($phrase['text']);
             $decoded = json_decode($responseBody, true);
