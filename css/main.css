@@ -44,19 +44,6 @@ body {
     flex-direction: column;
 }
 
-#translation {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    text-align: center;
-    justify-content: end;
-    font-size: clamp(1.5rem, 8vw, 4rem);
-}
-
-#phrase {
-
-}
-
 #lesson, #start {
     cursor: pointer;
 }
@@ -68,12 +55,31 @@ body {
     align-items: center;
 }
 
-#original {
+#translation {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+
+#translation_to {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    text-align: center;
+    justify-content: end;
+    font-size: clamp(1.5rem, 8vw, 4rem);
+}
+
+#translation_from {
     flex: 1;
     text-align: center;
     font-size: clamp(1.25rem, 6vw, 2rem);
     color: var(--original-text-color);
     margin-top: 1em;
+}
+
+#phrase {
+
 }
 
 .active {
@@ -107,6 +113,10 @@ body {
 
 .icon-button-large {
     font-size: clamp(20rem, 20vw, 6rem);
+}
+
+.icon-button-small {
+    font-size: 8vh;
 }
 
 #toolbar {

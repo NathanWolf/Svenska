@@ -26,16 +26,20 @@ require_once('data/version.inc.php');
     <div class="main">
         <div id="lesson" style="display: none">
             <div id="translation">
-                <div id="phrase">
+                <div id="translation_to">
+                    <div id="phrase">
+
+                    </div>
+                </div>
+                <div id="translation_from">
 
                 </div>
             </div>
-            <div id="original">
-
-            </div>
             <div id="toolbar">
                 <div id="controls" style="visibility: hidden">
-                    <span class="icon-button">&#x23F8;</span>
+                    <span id="button_previous" class="icon-button icon-button-small">&#x25C0;</span>
+                    <span id="button_paused" class="icon-button">&#x23F8;</span>
+                    <span id="button_next" class="icon-button icon-button-small">&#x25B6;</span>
                 </div>
             </div>
         </div>

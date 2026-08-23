@@ -1,14 +1,19 @@
 class Svenska {
     #loaded = false;
     #playing = false;
+    #dirty = false;
     #phrases = null;
     #current = 0;
     #categories = null;
     #audio = new Audio();
 
     #phraseDisplay = document.getElementById('phrase');
-    #originalDisplay = document.getElementById('original');
-    #startDisplay = document.getElementById('start');
+    #translationDisplay = document.getElementById('translation');
+    #originalDisplay = document.getElementById('translation_from');
+    #startButton = document.getElementById('start');
+    #pausedButton = document.getElementById('button_paused');
+    #nextButton = document.getElementById('button_next');
+    #previousButton = document.getElementById('button_previous');
     #lessonDisplay = document.getElementById('lesson');
     #loadingDisplay = document.getElementById('loading');
     #controlsDisplay = document.getElementById('controls');
@@ -20,8 +25,11 @@ class Svenska {
 
     register() {
         let svenska = this;
-        this.#startDisplay.addEventListener('click', function() { svenska.start(); });
-        this.#lessonDisplay.addEventListener('click', function() { svenska.toggle(); });
+        this.#startButton.addEventListener('click', function() { svenska.start(); });
+        this.#pausedButton.addEventListener('click', function() { svenska.play(); });
+        this.#nextButton.addEventListener('click', function() { svenska.next(); });
+        this.#previousButton.addEventListener('click', function() { svenska.previous(); });
+        this.#translationDisplay.addEventListener('click', function() { svenska.toggle(); });
         this.#audio.addEventListener('ended', () => {
             svenska.next();
         });
@@ -57,7 +65,7 @@ class Svenska {
         this.#categories = data.categories;
         this.#loaded = true;
         this.#loadingDisplay.style.display = 'none';
-        this.#startDisplay.style.display = 'flex';
+        this.#startButton.style.display = 'flex';
     }
 
     toggle() {
@@ -69,7 +77,7 @@ class Svenska {
     }
 
     start() {
-        this.#startDisplay.style.display = 'none';
+        this.#startButton.style.display = 'none';
         this.#lessonDisplay.style.display = 'flex';
         this.#playing = true;
         this.continue();
@@ -79,7 +87,12 @@ class Svenska {
         if (!this.#loaded || this.#audio == null) return;
 
         this.#playing = true;
-        this.#audio.play();
+        if (this.#dirty) {
+            this.#dirty = false;
+            this.continue();
+        } else {
+            this.#audio.play();
+        }
         this.#controlsDisplay.style.visibility = 'hidden';
     }
 
@@ -99,13 +112,26 @@ class Svenska {
         this.continue();
     }
 
+    previous() {
+        this.#current--;
+        if (this.#current < 0) {
+            this.#current = this.#phrases.length - 1;
+        }
+        this.continue();
+    }
+
     continue() {
-        if (!this.#loaded || !this.#phrases || !this.#playing) return;
+        if (!this.#loaded || !this.#phrases) return;
 
         const phrase = this.#phrases[this.#current];
         this.#phraseDisplay.innerHTML = phrase.translation.text;
         this.#originalDisplay.innerText = phrase.text;
-        this.#playPhrase(phrase);
+
+        if (this.#playing) {
+            this.#playPhrase(phrase);
+        } else {
+            this.#dirty = true;
+        }
     }
 
     #playPhrase(phrase) {
@@ -186,6 +212,8 @@ class Svenska {
             });
             navigator.mediaSession.setActionHandler('play', () => svenska.play());
             navigator.mediaSession.setActionHandler('pause', () => svenska.pause());
+            navigator.mediaSession.setActionHandler('previoustrack', () => svenska.previous());
+            navigator.mediaSession.setActionHandler('nexttrack', () => svenska.next());
         }
 
         const blob = new Blob([byteArray], { type: 'audio/mpeg' });
