@@ -91,7 +91,32 @@ class Svenska {
             const li = document.createElement('li');
             li.className = 'category';
             li.textContent = category.from_name;
-            li.addEventListener('click', function() { svenska.startCategory(category.id); });
+            li.addEventListener('click', function() { svenska.showCategory(category.id); });
+            categoryList.appendChild(li);
+        });
+
+        this.#lessonDisplay.style.display = 'none';
+        categoryList.style.display = 'flex';
+    }
+
+    showCategory(categoryId) {
+        const svenska = this;
+        const category = this.#categories[categoryId];
+        const categoryList = this.#categoriesDisplay;
+        categoryList.innerHTML = '';
+
+        const li = document.createElement('li');
+        li.className = 'category';
+        li.textContent = 'Play All';
+        li.addEventListener('click', function() { svenska.startAllCategory(categoryId); });
+        categoryList.appendChild(li);
+
+        category.phrases.forEach(phraseId => {
+            let phrase = this.#phrases[phraseId];
+            const li = document.createElement('li');
+            li.className = 'category';
+            li.textContent = phrase.text;
+            li.addEventListener('click', function() { svenska.startCategoryPhrase(categoryId, phrase.id); });
             categoryList.appendChild(li);
         });
 
@@ -119,7 +144,7 @@ class Svenska {
         }
     }
 
-    startCategory(categoryId) {
+    startCategoryPhrase(categoryId, phraseId) {
         this.#playlist = [];
         let category = this.#categories[categoryId];
         for (let i = 0; i < category.phrases.length; i++) {
@@ -128,7 +153,20 @@ class Svenska {
         if (this.#shuffle) {
             this.shuffle();
         }
+        this.#current = 0;
+        if (phraseId != null) {
+            for (let i = 0; i < this.#playlist.length; i++) {
+                if (this.#playlist[i].id == phraseId) {
+                    this.#current = i;
+                    break;
+                }
+            }
+        }
         this.#start();
+    }
+
+    startAllCategory(categoryId) {
+        this.startCategoryPhrase(categoryId);
     }
 
     startAll() {
@@ -142,6 +180,7 @@ class Svenska {
         if (this.#shuffle) {
             this.shuffle();
         }
+        this.#current = 0;
         this.#start();
     }
 
