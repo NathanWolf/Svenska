@@ -93,57 +93,29 @@ body {
     to { transform: rotate(360deg); }
 }
 
-.play-icon {
-    width: 0;
-    height: 0;
-    /* A triangle is just a box with zero width/height and asymmetric
-       transparent borders -- the visible "wedge" is whichever border
-       side isn't transparent. Here, left border is solid, forming a
-       triangle pointing right. */
-    border-top: 40px solid transparent;
-    border-bottom: 40px solid transparent;
-    border-left: 64px solid rgba(255, 255, 255, 0.3); /* semi-transparent white */
-
-    /* Optical centering: a play triangle's visual "center of mass" sits
-       left of its bounding box center, so nudge it right slightly to
-       look properly centered to the eye. */
-    margin-left: 8px;
-
+.icon-button {
+    font-size: 10vh;
+    color: rgba(255, 255, 255, 0.3);
     cursor: pointer;
-    transition: border-left-color 0.15s ease;
+    transition: color 0.15s ease;
+    user-select: none;
 }
 
-.play-icon:hover {
-    border-left-color: rgba(255, 255, 255, 0.5); /* brighten slightly on hover */
+.icon-button:hover {
+    color: rgba(255, 255, 255, 0.5);
 }
 
-.pause-icon {
-    width: 48px;
-    height: 48px;
-    display: flex;
-    justify-content: space-between;
-    cursor: pointer;
-}
-
-.pause-icon span {
-    width: 16px;   /* two bars + gap = 16+16+16 = 48px total width */
-    height: 48px;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 3px;
-    transition: background 0.15s ease;
-}
-
-.pause-icon:hover span {
-    background: rgba(255, 255, 255, 0.5);
+.icon-button-large {
+    font-size: clamp(20rem, 20vw, 6rem);
 }
 
 #toolbar {
-    padding: 1em;
+    padding: 8px;
     text-align: center;
     color: var(--original-text-color);
 }
 
 #controls {
     font-size: clamp(1.25rem, 6vw, 2rem);
-    height: 48px;
+    height: 10vh;
 }
