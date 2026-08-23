@@ -2,6 +2,7 @@
 
 namespace com\elmakers\svenska;
 
+use Exception;
 use PDO;
 
 require_once 'config.inc.php';
@@ -151,6 +152,10 @@ class Database {
 
     function lastInsertId() {
         return $this->pdo->lastInsertId();
+    }
+
+    function rowsAffected() {
+        return $this->rowsAffected;
     }
 
     function insert($table, $data) {
