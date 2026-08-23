@@ -131,7 +131,7 @@ class Svenska {
             let phrase = this.#phrases[phraseId];
             const li = document.createElement('li');
             li.className = 'category';
-            li.textContent = phrase.text;
+            li.textContent = phrase.text.charAt(0).toUpperCase() + phrase.text.slice(1);
             li.addEventListener('click', function() { svenska.startCategoryPhrase(categoryId, phrase.id); });
             categoryList.appendChild(li);
         });
