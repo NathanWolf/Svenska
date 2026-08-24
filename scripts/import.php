@@ -32,9 +32,9 @@ try {
 
     $categories = $db->getCategories();
     $fromCategoryNames = $db->getCategoryNames($fromLanguage);
-    $fromCategoryNames = $db->index($fromCategoryNames, 'name');
+    $fromCategoryNames = array_change_key_case($db->index($fromCategoryNames, 'name'));
     $toCategoryNames = $db->getCategoryNames($toLanguage);
-    $toCategoryNames = $db->index($toCategoryNames, 'name');
+    $toCategoryNames = array_change_key_case($db->index($toCategoryNames, 'name'));
 
     echo "Loading $filename\n";
 
@@ -59,16 +59,18 @@ try {
         $fromText = sanitize($row[$fromIndex]);
         $toText = sanitize($row[$toIndex]);
         $fromCategory = $row[$fromCategoryIndex];
+        $fromCategoryKey = strtolower($fromCategory);
         $toCategory = $row[$toCategoryIndex];
+        $toCategoryKey = $toCategory ? strtolower($toCategory) : $toCategory;
 
         if (isset($fromPhrases[$fromText]) || isset($toPhrases[$toText])) {
             echo "Skipped: $fromText\n";
             continue;
         }
 
-        if (isset($fromCategoryNames[$fromCategory])) {
-            $categoryId = $fromCategoryNames[$fromCategory]['category_id'];
-            if (!isset($toCategoryNames[$toCategory]) || $toCategoryNames[$toCategory]['category_id'] != $categoryId) {
+        if (isset($fromCategoryNames[$fromCategoryKey])) {
+            $categoryId = $fromCategoryNames[$fromCategoryKey]['category_id'];
+            if ($toCategoryKey && (!isset($toCategoryNames[$toCategoryKey]) || $toCategoryNames[$toCategoryKey]['category_id'] != $categoryId)) {
                 throw new Exception("Category mismatch for $fromCategory ($categoryId) and $toCategory");
             }
         } else {
@@ -77,8 +79,8 @@ try {
             $db->insert('category', array('id' => $categoryId));
             $db->insert('category_name', array('category_id' => $categoryId, 'language_id' => $fromLanguage, 'name' => $fromCategory));
             $db->insert('category_name', array('category_id' => $categoryId, 'language_id' => $toLanguage, 'name' => $toCategory));
-            $fromCategoryNames[$fromCategory] = array('category_id' => $categoryId);
-            $toCategoryNames[$toCategory] = array('category_id' => $categoryId);
+            $fromCategoryNames[$fromCategoryKey] = array('category_id' => $categoryId);
+            $toCategoryNames[$toCategoryKey] = array('category_id' => $categoryId);
             $categories[$categoryId] = array('id' => $categoryId);
         }
 
