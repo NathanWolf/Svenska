@@ -40,10 +40,21 @@ try {
         $category['from_name'] = $fromCategories[$category['id']]['name'] ?? null;
         $category['to_name'] = $toCategories[$category['id']]['name'] ?? null;
         $category['phrases'] = [];
+        $category['children'] = [];
     }
 
     foreach ($phrases as $phrase) {
         $categories[$phrase['category_id']]['phrases'][] = $phrase['id'];
+    }
+
+    $allCategories = $categories;
+    $categories = array();
+    foreach ($allCategories as &$category) {
+        if ($category['parent_category_id']) {
+            $allCategories[$category['parent_category_id']]['children'][] = $category;
+        } else {
+            $categories[$category['id']] = &$category;
+        }
     }
 
     echo json_encode(array(

@@ -106,7 +106,7 @@ class Svenska {
             const li = document.createElement('li');
             li.className = 'category';
             li.textContent = category.from_name;
-            li.addEventListener('click', function() { svenska.showCategory(category.id); });
+            li.addEventListener('click', function() { svenska.showCategory(category); });
             categoryList.appendChild(li);
         });
 
@@ -114,9 +114,8 @@ class Svenska {
         categoryList.style.display = 'flex';
     }
 
-    showCategory(categoryId) {
+    showCategory(category) {
         const svenska = this;
-        const category = this.#categories[categoryId];
         const categoryList = this.#categoriesDisplay;
         categoryList.innerHTML = '';
         categoryList.scrollTop = 0;
@@ -124,15 +123,22 @@ class Svenska {
         const li = document.createElement('li');
         li.className = 'category';
         li.textContent = 'Play All';
-        li.addEventListener('click', function() { svenska.startAllCategory(categoryId); });
+        li.addEventListener('click', function() { svenska.startAllCategory(category); });
         categoryList.appendChild(li);
-
         category.phrases.forEach(phraseId => {
             let phrase = this.#phrases[phraseId];
             const li = document.createElement('li');
             li.className = 'category';
             li.textContent = phrase.text.charAt(0).toUpperCase() + phrase.text.slice(1);
-            li.addEventListener('click', function() { svenska.startCategoryPhrase(categoryId, phrase.id); });
+            li.addEventListener('click', function() { svenska.startCategoryPhrase(category, phrase.id); });
+            categoryList.appendChild(li);
+        });
+
+        category.children.forEach(category => {
+            const li = document.createElement('li');
+            li.className = 'category';
+            li.textContent = category.from_name;
+            li.addEventListener('click', function() { svenska.showCategory(category); });
             categoryList.appendChild(li);
         });
 
@@ -178,12 +184,9 @@ class Svenska {
         }
     }
 
-    startCategoryPhrase(categoryId, phraseId) {
+    startCategoryPhrase(category, phraseId) {
         this.#playlist = [];
-        let category = this.#categories[categoryId];
-        for (let i = 0; i < category.phrases.length; i++) {
-            this.#playlist.push(this.#phrases[category.phrases[i]]);
-        }
+        this.#addCategoryToPlaylist(category);
         if (this.#shuffle) {
             this.shuffle();
         }
@@ -199,17 +202,24 @@ class Svenska {
         this.#start();
     }
 
-    startAllCategory(categoryId) {
-        this.startCategoryPhrase(categoryId);
+    startAllCategory(category) {
+        this.startCategoryPhrase(category);
+    }
+
+    #addCategoryToPlaylist(category) {
+        for (let i = 0; i < category.phrases.length; i++) {
+            this.#playlist.push(this.#phrases[category.phrases[i]]);
+        }
+        for (let i = 0; i < category.children.length; i++) {
+            this.#addCategoryToPlaylist(category.children[i]);
+        }
     }
 
     startAll() {
         this.#playlist = [];
         for (let categoryId in this.#categories) {
             let category = this.#categories[categoryId];
-            for (let i = 0; i < category.phrases.length; i++) {
-                this.#playlist.push(this.#phrases[category.phrases[i]]);
-            }
+            this.#addCategoryToPlaylist(category);
         }
         if (this.#shuffle) {
             this.shuffle();

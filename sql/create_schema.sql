@@ -148,5 +148,11 @@ alter table audio
         foreign key (phrase_id) references phrase (id)
             on delete cascade;
 
+alter table category
+    add parent_category_id char(36) null;
+
+alter table category
+    add constraint category_parent_category_id_fk
+        foreign key (parent_category_id) references category (id);
 
 
