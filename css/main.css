@@ -158,8 +158,8 @@ body {
     white-space: nowrap;
 }
 
-li.category {
-    list-style: none;
+.category {
+    display: flex;
     cursor: pointer;
     margin-left: 16px;
     margin-right: 16px;
@@ -169,6 +169,14 @@ li.category {
     margin-top: 0.5em;
 
     border-top: 1px solid var(--separator-color);
+}
+
+span.category_icon {
+    font-size: 0.75em;
+    margin-right: 16px;
+    width: 2em;
+    min-width: 1em;
+    max-width: 1em;
 }
 
 @media (hover: hover) {
