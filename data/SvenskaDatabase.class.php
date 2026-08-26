@@ -134,6 +134,14 @@ class SvenskaDatabase extends Database {
         return $this->get('phrase', $phraseId);
     }
 
+    public function getLanguage($languageId){
+        $language = $this->get('language', $languageId);
+        if (!$language) {
+            $language = $this->queryOne('language', 'language_id=:id order by priority asc limit 1', array('id' => $languageId));
+        }
+        return $language;
+    }
+
     public function getLanguagePhrases($languageId) {
         $phrases = $this->getMultiple('phrase', $languageId, 'language_id');
         return $this->index($phrases);

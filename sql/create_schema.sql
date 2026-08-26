@@ -155,4 +155,8 @@ alter table category
     add constraint category_parent_category_id_fk
         foreign key (parent_category_id) references category (id);
 
-
+alter table language
+    add language_id char(36) not null,
+    add priority int default 0 not null,
+    add constraint language_unique
+        unique (language_id, priority);

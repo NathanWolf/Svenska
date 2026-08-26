@@ -12,7 +12,7 @@ try {
     }
 
     if (count($argv) < 2) {
-        throw new Exception("Usage: php import.php phrases.csv");
+        throw new Exception("Usage: php import.php phrases.csv <from language code> <to language code>");
     }
 
     $filename = $argv[1];
@@ -20,10 +20,22 @@ try {
         throw new Exception("Input file not found: $filename");
     }
 
+    $fromLanguage = $argv[2] ?? 'en-us';
+    $toLanguage = $argv[3] ?? 'sv-se';
+
     $db = new SvenskaDatabase(true);
 
-    $fromLanguage = 'en-us';
-    $toLanguage = 'sv-se';
+    $fromLanguageRecord = $db->getLanguage($fromLanguage);
+    if (!$fromLanguageRecord) {
+        throw new Exception("Invalid language code: $fromLanguage");
+    }
+    $fromLanguage = $fromLanguageRecord['id'];
+
+    $toLanguageRecord = $db->getLanguage($toLanguage);
+    if (!$toLanguageRecord) {
+        throw new Exception("Invalid language code: $toLanguage");
+    }
+    $toLanguage = $toLanguageRecord['id'];
 
     $fromPhrases = $db->getLanguagePhrases($fromLanguage);
     $fromPhrases = $db->index($fromPhrases, 'text');
@@ -50,10 +62,12 @@ try {
     if (!isset($headers['English']) || !isset($headers['Svenska']) || !isset($headers['Category English']) || !isset($headers['Category Svenska'])) {
         throw new Exception("Failed to find required column in file $filename");
     }
-    $fromIndex = $headers['English'];
-    $toIndex = $headers['Svenska'];
-    $fromCategoryIndex = $headers['Category English'];
-    $toCategoryIndex = $headers['Category Svenska'];
+    $fromLanguageName = $fromLanguageRecord['name'];
+    $toLanguageName = $toLanguageRecord['name'];
+    $fromIndex = $headers[$fromLanguageName];
+    $toIndex = $headers[$toLanguageName];
+    $fromCategoryIndex = $headers['Category ' . $fromLanguageName];
+    $toCategoryIndex = $headers['Category ' . $toLanguageName];
     $phrases = array();
     while (($row = fgetcsv($file, null, ',', '"', '\\')) !== FALSE) {
         $fromText = sanitize($row[$fromIndex]);
@@ -63,17 +77,34 @@ try {
         $toCategory = $row[$toCategoryIndex];
         $toCategoryKey = $toCategory ? strtolower($toCategory) : $toCategory;
 
-        if (isset($fromPhrases[$fromText]) || isset($toPhrases[$toText])) {
+        if (isset($fromPhrases[$fromText]) && isset($toPhrases[$toText])) {
             echo "Skipped: $fromText\n";
             continue;
         }
 
+        if (!$fromCategory) {
+            throw new Exception("Missing category for $fromText");
+        }
+
         if (isset($fromCategoryNames[$fromCategoryKey])) {
             $categoryId = $fromCategoryNames[$fromCategoryKey]['category_id'];
-            if ($toCategoryKey && (!isset($toCategoryNames[$toCategoryKey]) || $toCategoryNames[$toCategoryKey]['category_id'] != $categoryId)) {
+            if ($toCategoryKey && isset($toCategoryNames[$toCategoryKey]) && $toCategoryNames[$toCategoryKey]['category_id'] != $categoryId) {
                 throw new Exception("Category mismatch for $fromCategory ($categoryId) and $toCategory");
             }
+            if ($toCategoryKey && !isset($toCategoryNames[$toCategoryKey])) {
+                echo "Adding new translation for category: $fromCategory => $toCategory\n";
+                $db->insert('category_name', array('category_id' => $categoryId, 'language_id' => $toLanguage, 'name' => $toCategory));
+                $toCategoryNames[$toCategoryKey] = array('category_id' => $categoryId);
+            }
+        } else if (isset($toCategoryNames[$toCategoryKey])) {
+            $categoryId = $toCategoryNames[$toCategoryKey]['category_id'];
+            echo "Adding new translation for category: $fromCategory => $toCategory\n";
+            $db->insert('category_name', array('category_id' => $categoryId, 'language_id' => $fromLanguage, 'name' => $fromCategory));
+            $fromCategoryNames[$fromCategoryKey] = array('category_id' => $categoryId);
         } else {
+            if (!$toCategory) {
+                throw new Exception("Missing translation for new category $fromCategory");
+            }
             echo "Adding new category: $fromCategory\n";
             $categoryId = guidv4();
             $db->insert('category', array('id' => $categoryId));
@@ -85,11 +116,22 @@ try {
         }
 
         echo "Adding: $fromText\n";
-        $db->insert('phrase', array('language_id' => $fromLanguage, 'text' => $fromText, 'category_id' => $categoryId));
-        $db->insert('phrase', array('language_id' => $toLanguage, 'text' => $toText, 'category_id' => $categoryId));
 
-        $fromPhrase = $db->getUnique('phrase', array('language_id' => $fromLanguage, 'text' => $fromText, 'category_id' => $categoryId));
-        $toPhrase = $db->getUnique('phrase', array('language_id' => $toLanguage, 'text' => $toText, 'category_id' => $categoryId));
+        $fromPhrase = $fromPhrases[$fromText] ?? null;
+        $toPhrase = $toPhrases[$toText] ?? null;
+
+        if (!$fromPhrase) {
+            // echo "  Adding: $fromText\n";
+            $db->insert('phrase', array('language_id' => $fromLanguage, 'text' => $fromText, 'category_id' => $categoryId));
+            $fromPhrase = $db->getUnique('phrase', array('language_id' => $fromLanguage, 'text' => $fromText, 'category_id' => $categoryId));
+            $fromPhrases[$fromText] = $fromPhrase;
+        }
+        if (!$toPhrase) {
+            echo "  Adding: $toText\n";
+            $db->insert('phrase', array('language_id' => $toLanguage, 'text' => $toText, 'category_id' => $categoryId));
+            $toPhrase = $db->getUnique('phrase', array('language_id' => $toLanguage, 'text' => $toText, 'category_id' => $categoryId));
+            $toPhrases[$toText] = $toPhrase;
+        }
 
         if (!$fromPhrase || !$toPhrase) {
             throw new Exception("Failed to insert phrases");

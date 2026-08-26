@@ -12,6 +12,18 @@ try {
     $fromLanguage = getParameter('from');
     $toLanguage = getParameter('to');
 
+    $fromLanguageRecord = $db->getLanguage($fromLanguage);
+    if (!$fromLanguageRecord) {
+        throw new Exception("Invalid language code: $fromLanguage");
+    }
+    $fromLanguage = $fromLanguageRecord['id'];
+
+    $toLanguageRecord = $db->getLanguage($toLanguage);
+    if (!$toLanguageRecord) {
+        throw new Exception("Invalid language code: $toLanguage");
+    }
+    $toLanguage = $toLanguageRecord['id'];
+
     $fromPhrases = $db->getLanguagePhrases($fromLanguage);
     $toPhrases = $db->getLanguagePhrases($toLanguage);
 

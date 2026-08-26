@@ -66,9 +66,16 @@ class Svenska {
 
     load() {
         const svenska = this;
+        const parameters = {};
+        let hashPieces = location.hash.substring(1).split('&');
+        for (let index = 0; index < hashPieces.length; index++) {
+            let hashPair = hashPieces[index].split('=');
+            parameters[hashPair[0]] = hashPair[1];
+        }
+
         let url = 'data/meta.php';
-        let fromLanguage = 'en-us';
-        let toLanguage = 'sv-se';
+        let fromLanguage = parameters.hasOwnProperty('from') ? parameters['from'] : 'en-us';
+        let toLanguage = parameters.hasOwnProperty('to') ? parameters['to'] : 'sv-se';
         url = url + '?from=' + fromLanguage + '&to=' + toLanguage;
         this.#request(url, function() {
             svenska.#processData(this.response);
