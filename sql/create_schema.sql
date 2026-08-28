@@ -44,7 +44,7 @@ CREATE TABLE user_token
 );
 
 CREATE TABLE language (
-    id varchar(16) NOT NULL,
+    id varchar(36) NOT NULL,
     name VARCHAR(255) NOT NULL,
     created timestamp not null default CURRENT_TIMESTAMP,
     updated timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
@@ -119,6 +119,16 @@ CREATE TABLE audio (
     constraint audio_voice_id_fk FOREIGN KEY (voice_id) REFERENCES voice(id)
 );
 
+CREATE TABLE language_translation (
+    from_language_id varchar(36) NOT NULL,
+    to_language_id varchar(36) NOT NULL,
+    created timestamp not null default CURRENT_TIMESTAMP,
+    updated timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    PRIMARY KEY (from_language_id, to_language_id),
+    constraint language_translation_from_language_id_fk FOREIGN KEY (from_language_id) REFERENCES language(id),
+    constraint language_translation_to_language_id_fk FOREIGN KEY (to_language_id) REFERENCES language(id)
+);
+
 -- Modifications after creation
 
 alter table category
@@ -157,6 +167,11 @@ alter table category
 
 alter table language
     add language_id char(36) not null,
+    add priority int default 0 not null,
+    add constraint language_unique
+        unique (language_id, priority);
+
+alter table voice
     add priority int default 0 not null,
     add constraint language_unique
         unique (language_id, priority);

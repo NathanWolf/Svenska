@@ -162,6 +162,10 @@ class SvenskaDatabase extends Database {
         return $this->multiIndex($translations, 'from_phrase_id', 'to_phrase_id');
     }
 
+    public function getLanguageTranslations() {
+        return $this->getAll('language_translation');
+    }
+
     public function getAudio($phraseId, $voiceId, $speed) {
         $audio = $this->queryOne('audio', 'phrase_id=:phrase AND voice_id=:voice AND speed=:speed', array('phrase' => $phraseId, 'voice' => $voiceId, 'speed' => $speed));
         if ($audio) {
