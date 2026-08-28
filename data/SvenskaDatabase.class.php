@@ -166,6 +166,21 @@ class SvenskaDatabase extends Database {
         return $this->getAll('language_translation');
     }
 
+    public function getLanguages() {
+        $languages = $this->getAll('language');
+        return $this->index($languages);
+    }
+
+    public function getUIText($languageId) {
+        $uiText = $this->getAll('ui_text');
+        $uiTextNames = $this->getMultiple('ui_text_name', $languageId, 'language_id');
+        $uiTextNames = $this->index($uiTextNames, 'ui_text_id');
+        foreach ($uiText as &$text) {
+            $text['name'] = $uiTextNames[$text['id']]['name'] ?? null;
+        }
+        return $this->index($uiText);
+    }
+
     public function getAudio($phraseId, $voiceId, $speed) {
         $audio = $this->queryOne('audio', 'phrase_id=:phrase AND voice_id=:voice AND speed=:speed', array('phrase' => $phraseId, 'voice' => $voiceId, 'speed' => $speed));
         if ($audio) {

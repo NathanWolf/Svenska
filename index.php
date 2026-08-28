@@ -32,7 +32,7 @@ require_once('data/version.inc.php');
             <div class="toolbar">
                 <div class="controls" id="controls_top" style="visibility: hidden">
                     <div class="left_group">
-                        <span id="button_back" class="icon-button" title="Go Back to the Main Menu">X</span>
+                        <span id="button_back" class="icon-button">X</span>
                     </div>
                     <div class="center_group">
                     </div>
@@ -54,16 +54,16 @@ require_once('data/version.inc.php');
             <div class="toolbar">
                 <div class="controls" id="controls_bottom" style="visibility: hidden">
                     <div class="left_group">
-                        <span id="button_repeat" class="icon-button" title="Repeat This Phrase">&#x27F2;&#xFE0E;</span>
-                        <span id="button_wait" class="icon-button icon-button-small" title="Wait After Each Phrase For You to Repeat">&#x2026;&#xFE0E;</span>
+                        <span id="button_repeat" class="icon-button">&#x27F2;&#xFE0E;</span>
+                        <span id="button_wait" class="icon-button icon-button-small">&#x2026;&#xFE0E;</span>
                     </div>
                     <div class="center_group">
-                        <span id="button_previous" class="icon-button icon-button-small" title="Previous Track">&#x25C0;&#xFE0E;</span>
-                        <span id="button_paused" class="icon-button" title="Unpause">&#x23F8;&#xFE0E;</span>
-                        <span id="button_next" class="icon-button icon-button-small" title="Next Track">&#x25B6;&#xFE0E;</span>
+                        <span id="button_previous" class="icon-button icon-button-small">&#x25C0;&#xFE0E;</span>
+                        <span id="button_paused" class="icon-button">&#x23F8;&#xFE0E;</span>
+                        <span id="button_next" class="icon-button icon-button-small">&#x25B6;&#xFE0E;</span>
                     </div>
                     <div class="right_group">
-                        <span id="button_shuffle" class="icon-button" title="Shuffle">&#x2928;&#xFE0E;</span>
+                        <span id="button_shuffle" class="icon-button">&#x2928;&#xFE0E;</span>
                     </div>
                 </div>
             </div>

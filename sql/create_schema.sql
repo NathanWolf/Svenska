@@ -72,6 +72,24 @@ CREATE TABLE category_name (
     constraint category_language_name unique (language_id, name)
 );
 
+CREATE TABLE ui_text (
+    id CHAR(36) NOT NULL,
+    created timestamp not null default CURRENT_TIMESTAMP,
+    updated timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE ui_text_name (
+    ui_text_id CHAR(36) NOT NULL,
+    language_id varchar(16) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    created timestamp not null default CURRENT_TIMESTAMP,
+    updated timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    PRIMARY KEY (ui_text_id, language_id),
+    constraint ui_text_name_ui_text_id_fk FOREIGN KEY (ui_text_id) REFERENCES ui_text(id),
+    constraint ui_text_name_language_id_fk FOREIGN KEY (language_id) REFERENCES language(id)
+);
+
 CREATE TABLE phrase (
     id CHAR(36) DEFAULT (uuid()),
     language_id varchar(16) NOT NULL,

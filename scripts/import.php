@@ -33,9 +33,6 @@ function update($db, $phrases, $fromLanguageId, $toLanguageId, $test) {
 
     foreach ($phrases as $row) {
         if (!isset($row[$fromLanguage]) || !isset($row[$toLanguage]) || !isset($row[$fromCategoryIndex]) || !isset($row[$toCategoryIndex])) {
-            echo json_encode($row) . "\n";
-            echo "$fromLanguage, $toLanguage, $fromCategoryIndex, $toCategoryIndex\n";
-
             throw new Exception("Failed to find required column");
         }
 

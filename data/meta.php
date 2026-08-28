@@ -27,6 +27,8 @@ try {
     $fromPhrases = $db->getLanguagePhrases($fromLanguage);
     $toPhrases = $db->getLanguagePhrases($toLanguage);
 
+    $ui = $db->getUIText($fromLanguage);
+
     // May need to optimize this in the future?
     $translations = $db->getTranslations();
 
@@ -73,7 +75,8 @@ try {
         'success' => true,
         'version' => VERSION,
         'phrases' => $phrases,
-        'categories' => $categories
+        'categories' => $categories,
+        'ui' => $ui
     ));
 } catch (Exception $e) {
     echo json_encode(array(

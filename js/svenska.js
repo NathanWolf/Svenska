@@ -12,6 +12,7 @@ class Svenska {
     #audio = new Audio();
     #waitTimer = null;
     #waitTime = 1000;
+    #ui = {};
 
     #phraseDisplay = document.getElementById('phrase');
     #translationDisplay = document.getElementById('translation');
@@ -92,7 +93,23 @@ class Svenska {
         this.#categories = data.categories;
         this.#loaded = true;
         this.#loadingDisplay.style.display = 'none';
+        this.#ui = data.ui;
+        this.#addTooltips();
         this.showCategories();
+    }
+
+    #addTooltips() {
+        this.#pausedButton.title = this.#getUIText('tooltip_unpause');
+        this.#shuffleButton.title = this.#getUIText('tooltip_shuffle');
+        this.#repeatButton.title = this.#getUIText('tooltip_repeat');
+        this.#waitButton.title = this.#getUIText('tooltip_wait');
+        this.#previousButton.title = this.#getUIText('tooltip_previous_track');
+        this.#nextButton.title = this.#getUIText('tooltip_next_track');
+        this.#backButton.title = this.#getUIText('tooltip_back_to_main_menu');
+    }
+
+    #getUIText(key) {
+        return this.#ui.hasOwnProperty(key) ? this.#ui[key]['name'] : key;
     }
 
     showCategories() {
@@ -145,7 +162,7 @@ class Svenska {
     }
 
     #addPlayAllSelector(categoryList, handler) {
-        this.#addSelector(categoryList, "&#x25B6;&#xFE0E;", "Play All", handler);
+        this.#addSelector(categoryList, "&#x25B6;&#xFE0E;", this.#getUIText('play_all'), handler);
     }
 
     #addCategorySelector(categoryList, category) {
