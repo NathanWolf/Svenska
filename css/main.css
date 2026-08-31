@@ -193,3 +193,19 @@ span.category_icon {
 #categories {
     overflow-y: auto;
 }
+
+#modes {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+#modes > div {
+    text-align: center;
+    font-size: 8vh;
+}
+
+.flashcard_type {
+    font-size: 3vh;
+    color: var(--original-text-color);
+}

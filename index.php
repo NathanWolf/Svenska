@@ -28,6 +28,20 @@ require_once('data/version.inc.php');
     </head>
 <body>
     <div id="main">
+        <div id="modes" style="display: none">
+            <div id="mode_listen">
+
+            </div>
+            <div id="mode_flashcards_from">
+
+            </div>
+            <div id="mode_flashcards_to">
+
+            </div>
+        </div>
+        <div id="categories" style="display: none">
+
+        </div>
         <div id="lesson" style="display: none">
             <div class="toolbar">
                 <div class="controls" id="controls_top" style="visibility: hidden">
@@ -67,9 +81,6 @@ require_once('data/version.inc.php');
                     </div>
                 </div>
             </div>
-        </div>
-        <div id="categories" style="display: none">
-
         </div>
         <div id="loading">
             <div class="spinner"></div>

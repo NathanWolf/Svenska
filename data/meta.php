@@ -76,6 +76,8 @@ try {
         'version' => VERSION,
         'phrases' => $phrases,
         'categories' => $categories,
+        'from' => $fromLanguageRecord,
+        'to' => $toLanguageRecord,
         'ui' => $ui
     ));
 } catch (Exception $e) {
