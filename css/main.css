@@ -203,6 +203,10 @@ span.category_icon {
 #modes > div {
     text-align: center;
     font-size: 8vh;
+    border: 2px solid;
+    border-color: var(--active-text-color);
+    padding: 1em;
+    cursor: pointer;
 }
 
 .flashcard_type {
