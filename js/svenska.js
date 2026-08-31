@@ -143,11 +143,6 @@ class Svenska {
 
     selectMode(mode) {
         this.#mode = mode;
-        if (this.#mode === 'listen') {
-            this.#waitButton.style.display = 'block';
-        } else {
-            this.#waitButton.style.display = 'none';
-        }
         this.showCategories();
     }
 
@@ -387,6 +382,10 @@ class Svenska {
     #continueListen(phrase) {
         this.#phraseDisplay.innerHTML = phrase.translation.text;
         this.#originalDisplay.innerText = phrase.text;
+        this.#controlsBottomDisplay.style.visibility = 'hidden';
+        this.#controlsTopDisplay.style.visibility = 'hidden';
+        this.#pausedButton.style.display = 'block';
+        this.#waitButton.style.display = 'block';
 
         if (this.#playing) {
             this.#playPhrase(phrase);
@@ -398,11 +397,19 @@ class Svenska {
     #continueFlashCardsFrom(phrase) {
         this.#phraseDisplay.innerHTML = phrase.text;
         this.#originalDisplay.innerText = '';
+        this.#controlsBottomDisplay.style.visibility = 'visible';
+        this.#controlsTopDisplay.style.visibility = 'visible';
+        this.#pausedButton.style.display = 'none';
+        this.#waitButton.style.display = 'none';
     }
 
     #continueFlashCardsTo(phrase) {
         this.#phraseDisplay.innerHTML = phrase.translation.text;
         this.#originalDisplay.innerText = '';
+        this.#controlsBottomDisplay.style.visibility = 'visible';
+        this.#controlsTopDisplay.style.visibility = 'visible';
+        this.#pausedButton.style.display = 'none';
+        this.#waitButton.style.display = 'none';
     }
 
     advanceFlashCard() {
