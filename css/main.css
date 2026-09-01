@@ -109,10 +109,14 @@ body {
     user-select: none;
     padding-left: 8px;
     padding-right: 8px;
+    width: 6vh;
+    max-width: 6vh;
 }
 
 .icon-button-small {
     font-size: 5vh;
+    width: 6vh;
+    max-width: 6vh;
 }
 
 .icon-button-large {

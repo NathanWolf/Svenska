@@ -22,7 +22,8 @@ class Svenska {
     #translationDisplay = document.getElementById('translation');
     #originalDisplay = document.getElementById('translation_from');
     #categoriesDisplay = document.getElementById('categories');
-    #pausedButton = document.getElementById('button_paused');
+    #pauseButton = document.getElementById('button_pause');
+    #playButton = document.getElementById('button_play');
     #nextButton = document.getElementById('button_next');
     #previousButton = document.getElementById('button_previous');
     #backButton = document.getElementById('button_back');
@@ -45,7 +46,8 @@ class Svenska {
 
     register() {
         let svenska = this;
-        this.#pausedButton.addEventListener('click', function() { svenska.play(); });
+        this.#playButton.addEventListener('click', function() { svenska.play(); });
+        this.#pauseButton.addEventListener('click', function() { svenska.pause(); });
         this.#nextButton.addEventListener('click', function() { svenska.next(); });
         this.#shuffleButton.addEventListener('click', function() { svenska.toggleShuffle(); });
         this.#repeatButton.addEventListener('click', function() { svenska.toggleRepeat(); });
@@ -111,7 +113,8 @@ class Svenska {
     }
 
     #addTooltips() {
-        this.#pausedButton.title = this.#getUIText('tooltip_unpause');
+        this.#pauseButton.title = this.#getUIText('tooltip_pause');
+        this.#playButton.title = this.#getUIText('tooltip_play');
         this.#shuffleButton.title = this.#getUIText('tooltip_shuffle');
         this.#repeatButton.title = this.#getUIText('tooltip_repeat');
         this.#waitButton.title = this.#getUIText('tooltip_wait');
@@ -301,9 +304,21 @@ class Svenska {
         this.continue();
     }
 
+    hideControls() {
+        this.#controlsTopDisplay.style.visibility = 'hidden';
+        this.#controlsBottomDisplay.style.visibility = 'hidden';
+    }
+
+    showControls() {
+        this.#controlsBottomDisplay.style.visibility = 'visible';
+        this.#controlsTopDisplay.style.visibility = 'visible';
+    }
+
     play() {
         if (!this.#loaded || this.#audio == null) return;
 
+        this.#playButton.style.display = 'none';
+        this.#pauseButton.style.display = 'block';
         this.#playing = true;
         if (this.#dirty) {
             this.#dirty = false;
@@ -311,24 +326,20 @@ class Svenska {
         } else {
             this.#audio.play();
         }
-        this.#controlsTopDisplay.style.visibility = 'hidden';
-        this.#controlsBottomDisplay.style.visibility = 'hidden';
     }
 
     stop() {
         this.pause();
-        this.#controlsBottomDisplay.style.visibility = 'hidden';
-        this.#controlsTopDisplay.style.visibility = 'hidden';
     }
 
     pause() {
         if (!this.#loaded || this.#audio == null) return;
 
+        this.#playButton.style.display = 'block';
+        this.#pauseButton.style.display = 'none';
         this.#playing = false;
         this.#flashCardShown = false;
         this.#audio.pause();
-        this.#controlsBottomDisplay.style.visibility = 'visible';
-        this.#controlsTopDisplay.style.visibility = 'visible';
         if (this.#waitTimer != null) {
             clearTimeout(this.#waitTimer);
             this.#waitTimer = null;
@@ -382,9 +393,8 @@ class Svenska {
     #continueListen(phrase) {
         this.#phraseDisplay.innerHTML = phrase.translation.text;
         this.#originalDisplay.innerText = phrase.text;
-        this.#controlsBottomDisplay.style.visibility = 'hidden';
-        this.#controlsTopDisplay.style.visibility = 'hidden';
-        this.#pausedButton.style.display = 'block';
+        this.#pauseButton.style.display = 'block';
+        this.#playButton.style.display = 'none';
         this.#waitButton.style.display = 'block';
 
         if (this.#playing) {
@@ -397,19 +407,19 @@ class Svenska {
     #continueFlashCardsFrom(phrase) {
         this.#phraseDisplay.innerHTML = phrase.text;
         this.#originalDisplay.innerText = '';
-        this.#controlsBottomDisplay.style.visibility = 'visible';
-        this.#controlsTopDisplay.style.visibility = 'visible';
-        this.#pausedButton.style.display = 'none';
+        this.#pauseButton.style.display = 'none';
+        this.#playButton.style.display = 'none';
         this.#waitButton.style.display = 'none';
+        this.showControls();
     }
 
     #continueFlashCardsTo(phrase) {
         this.#phraseDisplay.innerHTML = phrase.translation.text;
         this.#originalDisplay.innerText = '';
-        this.#controlsBottomDisplay.style.visibility = 'visible';
-        this.#controlsTopDisplay.style.visibility = 'visible';
-        this.#pausedButton.style.display = 'none';
+        this.#pauseButton.style.display = 'none';
+        this.#playButton.style.display = 'none';
         this.#waitButton.style.display = 'none';
+        this.showControls();
     }
 
     advanceFlashCard() {

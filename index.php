@@ -44,7 +44,7 @@ require_once('data/version.inc.php');
         </div>
         <div id="lesson" style="display: none">
             <div class="toolbar">
-                <div class="controls" id="controls_top" style="visibility: hidden">
+                <div class="controls" id="controls_top">
                     <div class="left_group">
                         <span id="button_back" class="icon-button">X</span>
                     </div>
@@ -66,14 +66,15 @@ require_once('data/version.inc.php');
                 </div>
             </div>
             <div class="toolbar">
-                <div class="controls" id="controls_bottom" style="visibility: hidden">
+                <div class="controls" id="controls_bottom">
                     <div class="left_group">
                         <span id="button_repeat" class="icon-button">&#x27F2;&#xFE0E;</span>
                         <span id="button_wait" class="icon-button icon-button-small">&#x2026;&#xFE0E;</span>
                     </div>
                     <div class="center_group">
                         <span id="button_previous" class="icon-button icon-button-small">&#x25C0;&#xFE0E;</span>
-                        <span id="button_paused" class="icon-button">&#x23F8;&#xFE0E;</span>
+                        <span id="button_play" class="icon-button" style="display: none">&#x25B6;&#xFE0E;</span>
+                        <span id="button_pause" class="icon-button">&#x23F8;&#xFE0E;</span>
                         <span id="button_next" class="icon-button icon-button-small">&#x25B6;&#xFE0E;</span>
                     </div>
                     <div class="right_group">
