@@ -17,6 +17,7 @@ class Svenska {
     #fromLanguage = null;
     #toLanguage = null;
     #flashCardShown = false;
+    #controlsShown = true;
 
     #phraseDisplay = document.getElementById('phrase');
     #translationDisplay = document.getElementById('translation');
@@ -30,9 +31,9 @@ class Svenska {
     #shuffleButton = document.getElementById('button_shuffle');
     #repeatButton = document.getElementById('button_repeat');
     #waitButton = document.getElementById('button_wait');
+    #controlsButton = document.getElementById('button_controls');
     #lessonDisplay = document.getElementById('lesson');
     #loadingDisplay = document.getElementById('loading');
-    #controlsTopDisplay = document.getElementById('controls_top');
     #controlsBottomDisplay = document.getElementById('controls_bottom');
     #modeDisplay = document.getElementById('modes');
     #modeListen = document.getElementById('mode_listen');
@@ -46,6 +47,7 @@ class Svenska {
 
     register() {
         let svenska = this;
+        this.#controlsButton.addEventListener('click', function() { svenska.toggleControls(); });
         this.#playButton.addEventListener('click', function() { svenska.play(); });
         this.#pauseButton.addEventListener('click', function() { svenska.pause(); });
         this.#nextButton.addEventListener('click', function() { svenska.next(); });
@@ -115,6 +117,7 @@ class Svenska {
     }
 
     #addTooltips() {
+        this.#controlsButton.title = this.#getUIText('tooltip_controls');
         this.#pauseButton.title = this.#getUIText('tooltip_pause');
         this.#playButton.title = this.#getUIText('tooltip_play');
         this.#shuffleButton.title = this.#getUIText('tooltip_shuffle');
@@ -307,13 +310,26 @@ class Svenska {
     }
 
     hideControls() {
-        this.#controlsTopDisplay.style.visibility = 'hidden';
+        this.#backButton.style.visibility = 'hidden';
         this.#controlsBottomDisplay.style.visibility = 'hidden';
     }
 
     showControls() {
         this.#controlsBottomDisplay.style.visibility = 'visible';
-        this.#controlsTopDisplay.style.visibility = 'visible';
+        this.#backButton.style.visibility = 'visible';
+    }
+
+    toggleControls() {
+        this.#controlsShown = !this.#controlsShown;
+        this.checkShowControls();
+    }
+
+    checkShowControls() {
+        if (this.#controlsShown) {
+            this.showControls();
+        } else {
+            this.hideControls();
+        }
     }
 
     play() {
@@ -398,6 +414,7 @@ class Svenska {
         this.#pauseButton.style.display = 'block';
         this.#playButton.style.display = 'none';
         this.#waitButton.style.display = 'block';
+        this.checkShowControls();
 
         if (this.#playing) {
             this.#playPhrase(phrase);
@@ -412,7 +429,7 @@ class Svenska {
         this.#pauseButton.style.display = 'none';
         this.#playButton.style.display = 'none';
         this.#waitButton.style.display = 'none';
-        this.showControls();
+        this.checkShowControls();
     }
 
     #continueFlashCardsTo(phrase) {
@@ -421,7 +438,7 @@ class Svenska {
         this.#pauseButton.style.display = 'none';
         this.#playButton.style.display = 'none';
         this.#waitButton.style.display = 'none';
-        this.showControls();
+        this.checkShowControls();
 
         if (this.#playing) {
             this.#playPhrase(phrase);

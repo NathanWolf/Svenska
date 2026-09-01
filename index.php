@@ -51,7 +51,7 @@ require_once('data/version.inc.php');
                     <div class="center_group">
                     </div>
                     <div class="right_group">
-
+                        <span id="button_controls" class="icon-button">&#x2630;&#xFE0E;</span>
                     </div>
                 </div>
             </div>
