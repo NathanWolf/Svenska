@@ -59,6 +59,8 @@ class Svenska {
         this.#modeFlashcardsFrom.addEventListener('click', function() { svenska.selectMode('flashcards_from'); });
         this.#modeFlashcardsTo.addEventListener('click', function() { svenska.selectMode('flashcards_to'); });
         this.#audio.addEventListener('ended', () => {
+            if (this.#mode !== 'listen') return;
+
             if (this.#wait) {
                 this.#waitTimer = setTimeout(() => {
                     svenska.checkNext();
@@ -420,6 +422,12 @@ class Svenska {
         this.#playButton.style.display = 'none';
         this.#waitButton.style.display = 'none';
         this.showControls();
+
+        if (this.#playing) {
+            this.#playPhrase(phrase);
+        } else {
+            this.#dirty = true;
+        }
     }
 
     advanceFlashCard() {
@@ -431,6 +439,12 @@ class Svenska {
             this.#flashCardShown = true;
             if (this.#mode === 'flashcards_from') {
                 this.#originalDisplay.innerHTML = phrase.translation.text;
+
+                if (this.#playing) {
+                    this.#playPhrase(phrase);
+                } else {
+                    this.#dirty = true;
+                }
             } else {
                 this.#originalDisplay.innerHTML = phrase.text;
             }
@@ -487,15 +501,16 @@ class Svenska {
                 words.push(current);
             }
 
-            this.#phraseDisplay.innerHTML = '';
+            let phraseDisplay = this.#mode === 'flashcards_from' ? this.#originalDisplay : this.#phraseDisplay;
+            phraseDisplay.innerHTML = '';
             const wordEls = words.map(w => {
                 const span = document.createElement('span');
                 span.className = 'word';
                 span.textContent = w.text;
                 span.dataset.start = w.start;
                 span.dataset.end = w.end;
-                this.#phraseDisplay.appendChild(span);
-                this.#phraseDisplay.appendChild(document.createTextNode(' '));
+                phraseDisplay.appendChild(span);
+                phraseDisplay.appendChild(document.createTextNode(' '));
                 return span;
             });
 
