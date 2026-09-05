@@ -416,6 +416,7 @@ class Svenska {
 
     next() {
         this.#current++;
+        this.#flashCardShown = false;
         if (this.#current >= this.#playlist.length) {
             this.#current = 0;
         }
@@ -424,6 +425,7 @@ class Svenska {
 
     previous() {
         this.#current--;
+        this.#flashCardShown = false;
         if (this.#current < 0) {
             this.#current = this.#playlist.length - 1;
         }
