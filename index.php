@@ -3,10 +3,16 @@
 require_once('data/version.inc.php');
 
 ?>
+<!DOCTYPE html>
 <html lang="en-us">
     <head>
+        <meta charset="utf-8">
         <title>På Svenska, Tack!</title>
         <meta name="viewport" content="width=device-width,initial-scale=0.5,maximum-scale=0.5,user-scalable=no"/>
+        <meta name="theme-color" content="#06070b">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -29,26 +35,38 @@ require_once('data/version.inc.php');
 <body>
     <div id="main">
         <div id="modes" style="display: none">
-            <div id="mode_listen">
+            <h1 id="app_title">På Svenska, Tack!</h1>
+            <div id="mode_list">
+                <div id="mode_listen" class="mode">
 
-            </div>
-            <div id="mode_flashcards_from">
+                </div>
+                <div id="mode_flashcards_from" class="mode">
 
-            </div>
-            <div id="mode_flashcards_to">
+                </div>
+                <div id="mode_flashcards_to" class="mode">
 
+                </div>
             </div>
         </div>
         <div id="categories" style="display: none">
+            <div class="toolbar toolbar_top">
+                <div class="header">
+                    <span id="button_category_back" class="icon-button">&#x2190;&#xFE0E;</span>
+                    <span id="category_title" class="screen_title"></span>
+                </div>
+            </div>
+            <div id="category_list">
 
+            </div>
         </div>
         <div id="lesson" style="display: none">
-            <div class="toolbar">
+            <div class="toolbar toolbar_top">
                 <div class="controls" id="controls_top">
                     <div class="left_group">
-                        <span id="button_back" class="icon-button">X</span>
+                        <span id="button_back" class="icon-button">&#x2715;&#xFE0E;</span>
                     </div>
                     <div class="center_group">
+                        <span id="progress" class="screen_title"></span>
                     </div>
                     <div class="right_group">
                         <span id="button_controls" class="icon-button">&#x2630;&#xFE0E;</span>
@@ -65,11 +83,11 @@ require_once('data/version.inc.php');
 
                 </div>
             </div>
-            <div class="toolbar">
+            <div class="toolbar toolbar_bottom">
                 <div class="controls" id="controls_bottom">
                     <div class="left_group">
                         <span id="button_repeat" class="icon-button">&#x27F2;&#xFE0E;</span>
-                        <span id="button_wait" class="icon-button icon-button-small">&#x2026;&#xFE0E;</span>
+                        <span id="button_wait" class="icon-button icon-button-small">&#x22EF;&#xFE0E;</span>
                     </div>
                     <div class="center_group">
                         <span id="button_previous" class="icon-button icon-button-small">&#x25C0;&#xFE0E;</span>
@@ -89,4 +107,3 @@ require_once('data/version.inc.php');
     </div>
 </body>
 </html>
-

@@ -6,6 +6,7 @@ class Svenska {
     #playlist = [];
     #current = 0;
     #categories = null;
+    #categoryPath = [];
     #shuffle = false;
     #wait = false;
     #repeat = false;
@@ -23,6 +24,9 @@ class Svenska {
     #translationDisplay = document.getElementById('translation');
     #originalDisplay = document.getElementById('translation_from');
     #categoriesDisplay = document.getElementById('categories');
+    #categoryListDisplay = document.getElementById('category_list');
+    #categoryTitleDisplay = document.getElementById('category_title');
+    #categoryBackButton = document.getElementById('button_category_back');
     #pauseButton = document.getElementById('button_pause');
     #playButton = document.getElementById('button_play');
     #nextButton = document.getElementById('button_next');
@@ -33,6 +37,7 @@ class Svenska {
     #waitButton = document.getElementById('button_wait');
     #controlsButton = document.getElementById('button_controls');
     #lessonDisplay = document.getElementById('lesson');
+    #progressDisplay = document.getElementById('progress');
     #loadingDisplay = document.getElementById('loading');
     #controlsBottomDisplay = document.getElementById('controls_bottom');
     #modeDisplay = document.getElementById('modes');
@@ -55,11 +60,13 @@ class Svenska {
         this.#repeatButton.addEventListener('click', function() { svenska.toggleRepeat(); });
         this.#waitButton.addEventListener('click', function() { svenska.toggleWait(); });
         this.#backButton.addEventListener('click', function() { svenska.showModes(); });
+        this.#categoryBackButton.addEventListener('click', function() { svenska.categoryUp(); });
         this.#previousButton.addEventListener('click', function() { svenska.previous(); });
         this.#translationDisplay.addEventListener('click', function() { svenska.toggle(); });
         this.#modeListen.addEventListener('click', function() { svenska.selectMode('listen'); });
         this.#modeFlashcardsFrom.addEventListener('click', function() { svenska.selectMode('flashcards_from'); });
         this.#modeFlashcardsTo.addEventListener('click', function() { svenska.selectMode('flashcards_to'); });
+        document.addEventListener('keydown', function(event) { svenska.#onKeyDown(event); });
         this.#audio.addEventListener('ended', () => {
             if (this.#mode !== 'listen') return;
 
@@ -71,6 +78,26 @@ class Svenska {
                 svenska.checkNext();
             }
         });
+    }
+
+    #onKeyDown(event) {
+        if (event.metaKey || event.ctrlKey || event.altKey) return;
+
+        const inLesson = this.#lessonDisplay.style.display !== 'none';
+        if (!inLesson) {
+            if (event.key !== 'Escape' || this.#categoriesDisplay.style.display === 'none') return;
+            this.categoryUp();
+        } else {
+            switch (event.key) {
+                case ' ':
+                case 'Enter': this.toggle(); break;
+                case 'ArrowRight': this.next(); break;
+                case 'ArrowLeft': this.previous(); break;
+                case 'Escape': this.showModes(); break;
+                default: return;
+            }
+        }
+        event.preventDefault();
     }
 
     #request(url, callback) {
@@ -126,11 +153,12 @@ class Svenska {
         this.#previousButton.title = this.#getUIText('tooltip_previous_track');
         this.#nextButton.title = this.#getUIText('tooltip_next_track');
         this.#backButton.title = this.#getUIText('tooltip_back_to_main_menu');
+        this.#categoryBackButton.title = this.#getUIText('tooltip_back_to_main_menu');
         this.#modeListen.innerHTML = this.#getUIText('mode_listen');
         this.#modeFlashcardsFrom.innerHTML = this.#getUIText('mode_flashcards_from') +
-            '<br><span class="flashcard_type">' + this.#fromLanguage.name + ' -&gt; ' + this.#toLanguage.name + '</span>';
+            '<br><span class="flashcard_type">' + this.#fromLanguage.name + ' &#8594; ' + this.#toLanguage.name + '</span>';
         this.#modeFlashcardsTo.innerHTML = this.#getUIText('mode_flashcards_to') +
-            '<br><span class="flashcard_type">' + this.#toLanguage.name + ' -&gt; ' + this.#fromLanguage.name + '</span>';
+            '<br><span class="flashcard_type">' + this.#toLanguage.name + ' &#8594; ' + this.#fromLanguage.name + '</span>';
     }
 
     #getUIText(key) {
@@ -140,6 +168,7 @@ class Svenska {
     #hideAll() {
         this.#loadingDisplay.style.display = 'none';
         this.#modeDisplay.style.display = 'none';
+        this.#categoriesDisplay.style.display = 'none';
         this.#lessonDisplay.style.display = 'none';
     }
 
@@ -155,43 +184,58 @@ class Svenska {
     }
 
     showCategories() {
-        this.stop();
-
-        const svenska = this;
-        const categories = Object.values(this.#categories);
-        const categoryList = this.#categoriesDisplay;
-        categoryList.innerHTML = '';
-        this.#addPlayAllSelector(categoryList, function() { svenska.startAll(); });
-        categories.forEach(category => {
-            this.#addCategorySelector(categoryList, category);
-        });
-
-        this.#hideAll();
-        categoryList.style.display = 'flex';
+        this.#categoryPath = [];
+        this.#showCategoryList();
     }
 
     showCategory(category) {
-        const svenska = this;
-        const categoryList = this.#categoriesDisplay;
-        categoryList.innerHTML = '';
-        categoryList.scrollTop = 0;
-        this.#addPlayAllSelector(categoryList, function() { svenska.startAllCategory(category); });
-        category.children.forEach(category => {
-            this.#addCategorySelector(categoryList, category);
-        });
-        category.phrases.forEach(phraseId => {
-            let phrase = this.#phrases[phraseId];
-            let phraseText = phrase.text.charAt(0).toUpperCase() + phrase.text.slice(1);
-            this.#addSelector(categoryList, "&#x00B6;&#xFE0E;", phraseText, function() { svenska.startCategoryPhrase(category, phrase.id); });
-        });
-
-        this.#lessonDisplay.style.display = 'none';
-        categoryList.style.display = 'flex';
+        this.#categoryPath.push(category);
+        this.#showCategoryList();
     }
 
-    #addSelector(categoryList, iconContext, textContent, handler) {
+    categoryUp() {
+        if (this.#categoryPath.length === 0) {
+            this.showModes();
+            return;
+        }
+        this.#categoryPath.pop();
+        this.#showCategoryList();
+    }
+
+    // Renders the category currently at the end of the path, or the top-level
+    // list of categories when the path is empty.
+    #showCategoryList() {
+        this.stop();
+
+        const svenska = this;
+        const parent = this.#categoryPath.length > 0 ? this.#categoryPath[this.#categoryPath.length - 1] : null;
+        const categories = parent != null ? parent.children : Object.values(this.#categories);
+        const categoryList = this.#categoryListDisplay;
+
+        categoryList.innerHTML = '';
+        categoryList.scrollTop = 0;
+        this.#addPlayAllSelector(categoryList, parent != null
+            ? function() { svenska.startAllCategory(parent); }
+            : function() { svenska.startAll(); });
+        categories.forEach(category => {
+            this.#addCategorySelector(categoryList, category);
+        });
+        if (parent != null) {
+            parent.phrases.forEach(phraseId => {
+                let phrase = this.#phrases[phraseId];
+                let phraseText = phrase.text.charAt(0).toUpperCase() + phrase.text.slice(1);
+                this.#addSelector(categoryList, 'category_phrase', "&#x00BB;&#xFE0E;", phraseText, function() { svenska.startCategoryPhrase(parent, phrase.id); });
+            });
+        }
+
+        this.#categoryTitleDisplay.textContent = parent != null ? parent.from_name : this.#getUIText('mode_' + this.#mode);
+        this.#hideAll();
+        this.#categoriesDisplay.style.display = 'flex';
+    }
+
+    #addSelector(categoryList, className, iconContext, textContent, handler) {
         const categorySelector = document.createElement('div');
-        categorySelector.className = 'category';
+        categorySelector.className = 'category ' + className;
         const icon = document.createElement('span');
         icon.className = 'category_icon';
         icon.innerHTML = iconContext;
@@ -204,12 +248,12 @@ class Svenska {
     }
 
     #addPlayAllSelector(categoryList, handler) {
-        this.#addSelector(categoryList, "&#x25B6;&#xFE0E;", this.#getUIText('play_all'), handler);
+        this.#addSelector(categoryList, 'category_play', "&#x25B6;&#xFE0E;", this.#getUIText('play_all'), handler);
     }
 
     #addCategorySelector(categoryList, category) {
         let svenska = this;
-        this.#addSelector(categoryList, "&#x25A4;&#xFE0E;", category.from_name, function() { svenska.showCategory(category); });
+        this.#addSelector(categoryList, 'category_group', "&#x25A4;&#xFE0E;", category.from_name, function() { svenska.showCategory(category); });
     }
 
     toggleShuffle() {
@@ -303,8 +347,8 @@ class Svenska {
     }
 
     #start() {
+        this.#hideAll();
         this.#lessonDisplay.style.display = 'flex';
-        this.#categoriesDisplay.style.display = 'none';
         this.#playing = true;
         this.continue();
     }
@@ -336,7 +380,7 @@ class Svenska {
         if (!this.#loaded || this.#audio == null) return;
 
         this.#playButton.style.display = 'none';
-        this.#pauseButton.style.display = 'block';
+        this.#pauseButton.style.display = '';
         this.#playing = true;
         if (this.#dirty) {
             this.#dirty = false;
@@ -353,7 +397,7 @@ class Svenska {
     pause() {
         if (!this.#loaded || this.#audio == null) return;
 
-        this.#playButton.style.display = 'block';
+        this.#playButton.style.display = '';
         this.#pauseButton.style.display = 'none';
         this.#playing = false;
         this.#flashCardShown = false;
@@ -392,6 +436,7 @@ class Svenska {
         if (!this.#loaded || this.#playlist.length === 0) return;
 
         const phrase = this.#playlist[this.#current];
+        this.#progressDisplay.textContent = (this.#current + 1) + ' / ' + this.#playlist.length;
 
         switch (this.#mode) {
             case 'listen':
@@ -411,9 +456,11 @@ class Svenska {
     #continueListen(phrase) {
         this.#phraseDisplay.innerHTML = phrase.translation.text;
         this.#originalDisplay.innerText = phrase.text;
-        this.#pauseButton.style.display = 'block';
+        this.#originalDisplay.classList.remove('answer');
+        this.#reveal(this.#translationDisplay);
+        this.#pauseButton.style.display = '';
         this.#playButton.style.display = 'none';
-        this.#waitButton.style.display = 'block';
+        this.#waitButton.style.display = '';
         this.checkShowControls();
 
         if (this.#playing) {
@@ -426,6 +473,8 @@ class Svenska {
     #continueFlashCardsFrom(phrase) {
         this.#phraseDisplay.innerHTML = phrase.text;
         this.#originalDisplay.innerText = '';
+        this.#originalDisplay.classList.add('answer');
+        this.#reveal(this.#phraseDisplay);
         this.#pauseButton.style.display = 'none';
         this.#playButton.style.display = 'none';
         this.#waitButton.style.display = 'none';
@@ -435,6 +484,8 @@ class Svenska {
     #continueFlashCardsTo(phrase) {
         this.#phraseDisplay.innerHTML = phrase.translation.text;
         this.#originalDisplay.innerText = '';
+        this.#originalDisplay.classList.add('answer');
+        this.#reveal(this.#phraseDisplay);
         this.#pauseButton.style.display = 'none';
         this.#playButton.style.display = 'none';
         this.#waitButton.style.display = 'none';
@@ -456,6 +507,7 @@ class Svenska {
             this.#flashCardShown = true;
             if (this.#mode === 'flashcards_from') {
                 this.#originalDisplay.innerHTML = phrase.translation.text;
+                this.#reveal(this.#originalDisplay);
 
                 if (this.#playing) {
                     this.#playPhrase(phrase);
@@ -464,8 +516,15 @@ class Svenska {
                 }
             } else {
                 this.#originalDisplay.innerHTML = phrase.text;
+                this.#reveal(this.#originalDisplay);
             }
         }
+    }
+
+    #reveal(element) {
+        element.classList.remove('reveal');
+        void element.offsetWidth;
+        element.classList.add('reveal');
     }
 
     #playPhrase(phrase) {
@@ -494,6 +553,7 @@ class Svenska {
             byteArray[i] = audioBytes.charCodeAt(i);
         }
 
+        this.#audio.ontimeupdate = null;
         if (data.audio.alignment != null) {
             let alignment = data.audio.alignment;
 
@@ -531,14 +591,14 @@ class Svenska {
                 return span;
             });
 
-            this.#audio.addEventListener('timeupdate', () => {
+            this.#audio.ontimeupdate = () => {
                 const t = this.#audio.currentTime;
                 wordEls.forEach(span => {
                     const isActive = t >= span.dataset.start && t <= span.dataset.end;
                     span.classList.toggle('active', isActive);
                 });
                 this.#waitTime = Math.ceil(t * 1000);
-            });
+            };
         }
 
         let svenska = this;
