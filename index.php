@@ -69,7 +69,7 @@ require_once('data/version.inc.php');
                         <span id="progress" class="screen_title"></span>
                     </div>
                     <div class="right_group">
-                        <span id="button_controls" class="icon-button">&#x2630;&#xFE0E;</span>
+                        <span id="button_menu" class="icon-button">&#x2699;&#xFE0E;</span>
                     </div>
                 </div>
             </div>
