@@ -253,10 +253,13 @@ span.category_icon {
     max-width: 480px;
 }
 
+/* appearance stays native: Chrome anchors a fully appearance:none select's
+   popup using its pre-override metrics, so a box inflated this much via
+   padding/font-size opens its option list shifted up and to the left. */
 .setting_field select {
     width: 100%;
     margin: 0;
-    padding: 0.85em 2.75em 0.85em 1em;
+    padding: 0.85em 1em;
 
     font: inherit;
     font-size: clamp(1.05rem, 3.4vh, 1.5rem);
@@ -267,23 +270,8 @@ span.category_icon {
     border: 1px solid var(--border-color);
     border-radius: var(--small-radius);
 
-    appearance: none;
-    -webkit-appearance: none;
     cursor: pointer;
     transition: border-color var(--transition), box-shadow var(--transition);
-}
-
-/* select can't take a real ::after, so the arrow lives on the wrapper */
-.setting_field::after {
-    content: "\25BE\FE0E";
-    position: absolute;
-    top: 50%;
-    right: 1em;
-    transform: translateY(-50%);
-
-    font-size: 1.1em;
-    color: var(--muted-text-color);
-    pointer-events: none;
 }
 
 .setting_field select:focus {
