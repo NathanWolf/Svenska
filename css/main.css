@@ -357,11 +357,9 @@ span.category_icon {
     align-items: center;
     justify-content: center;
     flex: none;
-
-    width: 9vh;
-    height: 9vh;
-
-    font-size: 5.5vh;
+    width: 6vh;
+    max-width: 6vh;
+    font-size: 6vh;
     line-height: 1;
     border-radius: 50%;
     color: var(--icon-color);
@@ -371,15 +369,12 @@ span.category_icon {
                 box-shadow var(--transition), transform var(--transition);
 }
 
+.icon-button-small {
+}
+
 .icon-button:active {
     transform: scale(0.9);
     color: var(--hover-icon-color);
-}
-
-.icon-button-small {
-    width: 7.5vh;
-    height: 7.5vh;
-    font-size: 4vh;
 }
 
 .button_active {
