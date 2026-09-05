@@ -24,21 +24,27 @@ try {
     }
     $toLanguage = $toLanguageRecord['id'];
 
-    $voiceId = $_REQUEST['voice'] ?? null;
+    $voiceKey = $_REQUEST['voice'] ?? null;
 
     $fromPhrases = $db->getLanguagePhrases($fromLanguage);
     $toPhrases = $db->getLanguagePhrases($toLanguage);
 
     $languages = $db->getFromLanguages();
     $voices = $db->getVoices($toLanguage);
-    if (!$voiceId) {
+    $voice = null;
+    if ($voiceKey) {
+        foreach ($voices as $checkVoice) {
+            if ($checkVoice['key_name'] == $voiceKey) {
+                $voice = $checkVoice;
+                break;
+            }
+        }
+    } else {
         $voice = reset($voices);
-        $voiceId = $voice['id'];
     }
-    if (!isset($voices[$voiceId])) {
-        throw new Exception("Invalid voice id: $voiceId");
+    if (!$voice) {
+        throw new Exception("Invalid voice: $voiceKey");
     }
-    $voice = $voices[$voiceId];
 
     $ui = $db->getUIText($fromLanguage);
 

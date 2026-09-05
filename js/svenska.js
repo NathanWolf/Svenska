@@ -150,7 +150,8 @@ class Svenska {
         let url = 'data/meta.php';
         let fromLanguage = parameters.hasOwnProperty('from') ? parameters['from'] : 'en-us';
         let toLanguage = parameters.hasOwnProperty('to') ? parameters['to'] : 'sv-se';
-        url = url + '?from=' + fromLanguage + '&to=' + toLanguage;
+        let voiceKey = parameters.hasOwnProperty('voice') ? parameters['voice'] : '';
+        url = url + '?from=' + fromLanguage + '&to=' + toLanguage + '&voice=' + voiceKey;
         this.#request(url, function() {
             svenska.#processData(this.response);
         });
@@ -206,11 +207,12 @@ class Svenska {
         this.#voiceSelector.innerHTML = '';
         for (let voiceId in this.#voices) {
             let option = document.createElement('option');
-            option.value = voiceId;
+            let voice = this.#voices[voiceId];
+            option.value = voice.key_name;
             option.innerHTML = this.#voices[voiceId].icon + ' ' + this.#voices[voiceId].name;
             this.#voiceSelector.appendChild(option);
         }
-        this.#voiceSelector.value = this.#voice.id;
+        this.#voiceSelector.value = this.#voice.key_name;
     }
 
     #getUIText(key) {
@@ -418,14 +420,23 @@ class Svenska {
     hideSettings() {
         this.#lessonDisplay.style.display = 'flex';
         this.#settingsDisplay.style.display = 'none';
+        let newVoiceKey = this.#voiceSelector.value;
+        if (newVoiceKey !== this.#voice.key_name) {
+            for (let voiceId in this.#voices) {
+                let voice = this.#voices[voiceId];
+                if (voice.key_name === newVoiceKey) {
+                    this.#voice = voice;
+                    location.hash = 'voice=' + newVoiceKey;
+                    break;
+                }
+            }
+        }
 
         let newLanguageId = this.#languageSelector.value;
         if (newLanguageId !== this.#fromLanguage.language_id) {
-            location.hash = 'from=' + newLanguageId;
+            location.hash = 'from=' + newLanguageId + '&voice=' + newVoiceKey;
             this.reset();
         }
-        let newVoiceId = this.#voiceSelector.value;
-        this.#voice = this.#voices[newVoiceId];
     }
 
     play() {
