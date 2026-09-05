@@ -221,7 +221,7 @@ class Svenska {
         if (parent != null) {
             parent.phrases.forEach(phraseId => {
                 let phrase = this.#phrases[phraseId];
-                let phraseText = phrase.text.charAt(0).toUpperCase() + phrase.text.slice(1);
+                let phraseText = this.#upperFirst(phrase.text);
                 this.#addSelector(categoryList, 'category_phrase', "&#x00BB;&#xFE0E;", phraseText, function() { svenska.startCategoryPhrase(parent, phrase.id); });
             });
         }
@@ -229,6 +229,10 @@ class Svenska {
         this.#categoryTitleDisplay.textContent = parent != null ? parent.from_name : this.#getUIText('mode_' + this.#mode);
         this.#hideAll();
         this.#categoriesDisplay.style.display = 'flex';
+    }
+
+    #upperFirst(text) {
+        return text.charAt(0).toUpperCase() + text.slice(1);
     }
 
     #addSelector(categoryList, className, iconContext, textContent, handler) {
@@ -433,8 +437,8 @@ class Svenska {
     }
 
     #continueListen(phrase) {
-        this.#phraseDisplay.innerHTML = phrase.translation.text;
-        this.#originalDisplay.innerText = phrase.text;
+        this.#phraseDisplay.innerHTML = this.#upperFirst(phrase.translation.text);
+        this.#originalDisplay.innerText = this.#upperFirst(phrase.text);
         this.#originalDisplay.classList.remove('answer');
         this.#reveal(this.#translationDisplay);
         this.#pauseButton.style.display = '';
@@ -449,7 +453,7 @@ class Svenska {
     }
 
     #continueFlashCardsFrom(phrase) {
-        this.#phraseDisplay.innerHTML = phrase.text;
+        this.#phraseDisplay.innerHTML = this.#upperFirst(phrase.text);
         this.#originalDisplay.innerText = '';
         this.#originalDisplay.classList.add('answer');
         this.#reveal(this.#phraseDisplay);
@@ -459,7 +463,7 @@ class Svenska {
     }
 
     #continueFlashCardsTo(phrase) {
-        this.#phraseDisplay.innerHTML = phrase.translation.text;
+        this.#phraseDisplay.innerHTML = this.#upperFirst(phrase.translation.text);
         this.#originalDisplay.innerText = '';
         this.#originalDisplay.classList.add('answer');
         this.#reveal(this.#phraseDisplay);
@@ -482,7 +486,7 @@ class Svenska {
             const phrase = this.#playlist[this.#current];
             this.#flashCardShown = true;
             if (this.#mode === 'flashcards_from') {
-                this.#originalDisplay.innerHTML = phrase.translation.text;
+                this.#originalDisplay.innerHTML = this.#upperFirst(phrase.translation.text);
                 this.#reveal(this.#originalDisplay);
 
                 if (this.#playing) {
@@ -491,7 +495,7 @@ class Svenska {
                     this.#dirty = true;
                 }
             } else {
-                this.#originalDisplay.innerHTML = phrase.text;
+                this.#originalDisplay.innerHTML = this.#upperFirst(phrase.text);
                 this.#reveal(this.#originalDisplay);
             }
         }
@@ -537,6 +541,9 @@ class Svenska {
             // word's overall start/end time from its first/last character.
             const words = [];
             let current = { text: '', start: null, end: null };
+            if (alignment.characters.length > 0) {
+                alignment.characters[0] = alignment.characters[0].toUpperCase();
+            }
 
             alignment.characters.forEach((ch, i) => {
                 if (ch === ' ') {
