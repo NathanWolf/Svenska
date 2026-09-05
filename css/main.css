@@ -263,9 +263,9 @@ span.category_icon {
     color: var(--muted-text-color);
 }
 
-/* The hidden side of a flash card is the answer, so give it full contrast */
+/* The hidden side of a flash card is the answer */
 #translation_from.answer {
-    color: var(--text-color);
+    color: var(--muted-text-color);
 }
 
 /* Hairline rule that also hints at the hidden side of a flash card */
