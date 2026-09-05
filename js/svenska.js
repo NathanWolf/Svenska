@@ -66,6 +66,8 @@ class Svenska {
         this.#modeFlashcardsTo.addEventListener('click', function() { svenska.selectMode('flashcards_to'); });
         document.addEventListener('keydown', function(event) { svenska.#onKeyDown(event); });
         this.#audio.addEventListener('ended', () => {
+            this.#clearHighlights();
+
             if (this.#mode !== 'listen') return;
 
             if (this.#wait) {
@@ -74,6 +76,19 @@ class Svenska {
                 }, this.#waitTime);
             } else {
                 svenska.checkNext();
+            }
+        });
+    }
+
+    #clearHighlights() {
+        this.#originalDisplay.childNodes.forEach(child => {
+            if (child instanceof HTMLElement) {
+                child.classList.remove("active");
+            }
+        });
+        this.#phraseDisplay.childNodes.forEach(child => {
+            if (child instanceof HTMLElement) {
+                child.classList.remove("active");
             }
         });
     }
