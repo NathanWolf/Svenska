@@ -193,3 +193,10 @@ alter table voice
     add priority int default 0 not null,
     add constraint language_unique
         unique (language_id, priority);
+
+alter table language
+    add column flag varchar(32) not null;
+
+alter table voice
+    add column icon varchar(32) not null,
+    add column key_name varchar(32) not null;

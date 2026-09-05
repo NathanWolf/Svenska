@@ -11,10 +11,10 @@ use com\elmakers\svenska\SvenskaDatabase;
 
 try {
     $phraseId = getParameter('phrase');
-
+    $voiceId = getParameter('voice');
     $db = new SvenskaDatabase();
     $api = new TextToSpeech($db);
-    $audio = $api->getPhraseAudio($phraseId);
+    $audio = $api->getPhraseAudio($phraseId, $voiceId);
 
     echo json_encode(array(
         'success' => true,

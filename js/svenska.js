@@ -17,6 +17,9 @@ class Svenska {
     #ui = {};
     #fromLanguage = null;
     #toLanguage = null;
+    #languages = {};
+    #voices = {};
+    #voice = null;
     #flashCardShown = false;
 
     #phraseDisplay = document.getElementById('phrase');
@@ -25,6 +28,7 @@ class Svenska {
     #categoriesDisplay = document.getElementById('categories');
     #categoryListDisplay = document.getElementById('category_list');
     #categoryTitleDisplay = document.getElementById('category_title');
+    #settingsTitleDisplay = document.getElementById('settings_title');
     #categoryBackButton = document.getElementById('button_category_back');
     #pauseButton = document.getElementById('button_pause');
     #playButton = document.getElementById('button_play');
@@ -34,14 +38,18 @@ class Svenska {
     #shuffleButton = document.getElementById('button_shuffle');
     #repeatButton = document.getElementById('button_repeat');
     #waitButton = document.getElementById('button_wait');
-    #menuButton = document.getElementById('button_menu');
+    #settingsButton = document.getElementById('button_settings');
     #lessonDisplay = document.getElementById('lesson');
+    #settingsDisplay = document.getElementById('settings');
+    #settingsBackButton = document.getElementById('button_settings_back');
     #progressDisplay = document.getElementById('progress');
     #loadingDisplay = document.getElementById('loading');
     #modeDisplay = document.getElementById('modes');
     #modeListen = document.getElementById('mode_listen');
     #modeFlashcardsFrom = document.getElementById('mode_flashcards_from');
     #modeFlashcardsTo = document.getElementById('mode_flashcards_to');
+    #languageSelector = document.getElementById('language_selector');
+    #voiceSelector = document.getElementById('voice_selector');
 
     onInternalError(msg, url, line, col, error) {
         alert("An internal error occurred. Press OK to reload.\n\nDetails: " + msg + "\n" + error + "\n\n" + url + ":" + line + ":" + col);
@@ -50,7 +58,7 @@ class Svenska {
 
     register() {
         let svenska = this;
-        this.#menuButton.addEventListener('click', function() { svenska.showMenu(); });
+        this.#settingsButton.addEventListener('click', function() { svenska.showSettings(); });
         this.#playButton.addEventListener('click', function() { svenska.play(); });
         this.#pauseButton.addEventListener('click', function() { svenska.pause(); });
         this.#nextButton.addEventListener('click', function() { svenska.next(); });
@@ -58,6 +66,7 @@ class Svenska {
         this.#repeatButton.addEventListener('click', function() { svenska.toggleRepeat(); });
         this.#waitButton.addEventListener('click', function() { svenska.toggleWait(); });
         this.#backButton.addEventListener('click', function() { svenska.showModes(); });
+        this.#settingsBackButton.addEventListener('click', function() { svenska.hideSettings(); });
         this.#categoryBackButton.addEventListener('click', function() { svenska.categoryUp(); });
         this.#previousButton.addEventListener('click', function() { svenska.previous(); });
         this.#translationDisplay.addEventListener('click', function() { svenska.toggle(); });
@@ -122,6 +131,13 @@ class Svenska {
         request.send();
     }
 
+    reset() {
+        this.stop();
+        this.#hideAll();
+        this.#loadingDisplay.style.display = 'flex';
+        this.load();
+    }
+
     load() {
         const svenska = this;
         const parameters = {};
@@ -152,12 +168,15 @@ class Svenska {
         this.#toLanguage = data.to;
         this.#loaded = true;
         this.#ui = data.ui;
-        this.#addTooltips();
+        this.#languages = data.from_languages;
+        this.#voices = data.voices;
+        this.#voice = data.voice;
+        this.#populateUI();
         this.showModes();
     }
 
-    #addTooltips() {
-        this.#menuButton.title = this.#getUIText('tooltip_menu');
+    #populateUI() {
+        this.#settingsButton.title = this.#getUIText('tooltip_settings');
         this.#pauseButton.title = this.#getUIText('tooltip_pause');
         this.#playButton.title = this.#getUIText('tooltip_play');
         this.#shuffleButton.title = this.#getUIText('tooltip_shuffle');
@@ -172,6 +191,26 @@ class Svenska {
             '<br><span class="flashcard_type">' + this.#fromLanguage.name + ' &#8594; ' + this.#toLanguage.name + '</span>';
         this.#modeFlashcardsTo.innerHTML = this.#getUIText('mode_flashcards_to') +
             '<br><span class="flashcard_type">' + this.#toLanguage.name + ' &#8594; ' + this.#fromLanguage.name + '</span>';
+        this.#settingsTitleDisplay.textContent = this.#getUIText('tooltip_settings');
+
+        this.#languageSelector.innerHTML = '';
+        for (let languageId in this.#languages) {
+            let language = this.#languages[languageId];
+            let option = document.createElement('option');
+            option.value = language.language_id;
+            option.innerHTML = this.#languages[languageId].flag + ' ' + this.#languages[languageId].name;
+            this.#languageSelector.appendChild(option);
+        }
+        this.#languageSelector.value = this.#fromLanguage.language_id;
+
+        this.#voiceSelector.innerHTML = '';
+        for (let voiceId in this.#voices) {
+            let option = document.createElement('option');
+            option.value = voiceId;
+            option.innerHTML = this.#voices[voiceId].icon + ' ' + this.#voices[voiceId].name;
+            this.#voiceSelector.appendChild(option);
+        }
+        this.#voiceSelector.value = this.#voice.id;
     }
 
     #getUIText(key) {
@@ -370,8 +409,23 @@ class Svenska {
         this.continue();
     }
 
-    showMenu() {
-        alert("Menu is WIP :)")
+    showSettings() {
+        this.pause();
+        this.#lessonDisplay.style.display = 'none';
+        this.#settingsDisplay.style.display = 'flex';
+    }
+
+    hideSettings() {
+        this.#lessonDisplay.style.display = 'flex';
+        this.#settingsDisplay.style.display = 'none';
+
+        let newLanguageId = this.#languageSelector.value;
+        if (newLanguageId !== this.#fromLanguage.language_id) {
+            location.hash = 'from=' + newLanguageId;
+            this.reset();
+        }
+        let newVoiceId = this.#voiceSelector.value;
+        this.#voice = this.#voices[newVoiceId];
     }
 
     play() {
@@ -527,7 +581,7 @@ class Svenska {
     #playPhrase(phrase) {
         this.#dirty = true;
         const svenska = this;
-        let url = 'data/audio.php?phrase=' + phrase.translation.id;
+        let url = 'data/audio.php?phrase=' + phrase.translation.id + '&voice=' + this.#voice.id;
         this.#request(url, function() {
             svenska.#processAudio(this.response, phrase);
         });

@@ -171,6 +171,16 @@ class SvenskaDatabase extends Database {
         return $this->index($languages);
     }
 
+    public function getFromLanguages() {
+        $languages = $this->query('select language.* from language join language_translation on language.id=language_translation.from_language_id');
+        return $this->index($languages);
+    }
+
+    public function getVoices($languageId) {
+        $voices = $this->getMultiple('voice', $languageId, 'language_id', 'priority');
+        return $this->index($voices);
+    }
+
     public function getUIText($languageId) {
         $uiText = $this->getAll('ui_text');
         $uiTextNames = $this->getMultiple('ui_text_name', $languageId, 'language_id');

@@ -99,8 +99,12 @@ class Database {
         return null;
     }
 
-    public function getMultiple($table, $id, $idField = 'id') {
-        return $this->query("SELECT * FROM $table WHERE $idField=:id", array('id' => $id));
+    public function getMultiple($table, $id, $idField = 'id', $order = null) {
+        $query = "SELECT * FROM $table WHERE $idField=:id";
+        if ($order) {
+            $query .= " ORDER BY $order ASC";
+        }
+        return $this->query($query, array('id' => $id));
     }
 
     public function getAll($table, $sort = null) {

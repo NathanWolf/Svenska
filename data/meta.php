@@ -24,8 +24,21 @@ try {
     }
     $toLanguage = $toLanguageRecord['id'];
 
+    $voiceId = $_REQUEST['voice'] ?? null;
+
     $fromPhrases = $db->getLanguagePhrases($fromLanguage);
     $toPhrases = $db->getLanguagePhrases($toLanguage);
+
+    $languages = $db->getFromLanguages();
+    $voices = $db->getVoices($toLanguage);
+    if (!$voiceId) {
+        $voice = reset($voices);
+        $voiceId = $voice['id'];
+    }
+    if (!isset($voices[$voiceId])) {
+        throw new Exception("Invalid voice id: $voiceId");
+    }
+    $voice = $voices[$voiceId];
 
     $ui = $db->getUIText($fromLanguage);
 
@@ -78,7 +91,10 @@ try {
         'categories' => $categories,
         'from' => $fromLanguageRecord,
         'to' => $toLanguageRecord,
-        'ui' => $ui
+        'ui' => $ui,
+        'from_languages' => $languages,
+        'voices' => $voices,
+        'voice' => $voice
     ));
 } catch (Exception $e) {
     echo json_encode(array(

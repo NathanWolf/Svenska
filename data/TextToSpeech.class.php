@@ -10,19 +10,17 @@ require_once 'config.inc.php';
 class TextToSpeech {
     private SvenskaDatabase $db;
     private string $apiKey;
-    private string $voiceId;
     private float $speed;
     private string $cacheDir;
 
     public function __construct(SvenskaDatabase $db) {
         $this->db = $db;
         $this->apiKey = _CONFIG['elevenlabs']['api-key'];
-        $this->voiceId = _CONFIG['elevenlabs']['voice-id'];
         $this->speed = 0.75;
         $this->cacheDir = __DIR__ . '/audio';
     }
 
-    public function getPhraseAudio(string $phraseId): array {
+    public function getPhraseAudio(string $phraseId, string $voiceId): array {
         $phrase = $this->db->getPhrase($phraseId);
         if (!$phrase) {
             throw new Exception("Phrase not found: $phraseId");
@@ -32,14 +30,14 @@ class TextToSpeech {
             mkdir($this->cacheDir, 0755, true);
         }
 
-        $audio = $this->db->getAudio($phraseId, $this->voiceId, $this->speed);
+        $audio = $this->db->getAudio($phraseId, $voiceId, $this->speed);
         if (_CONFIG['debug']) {
             if (!$audio || !file_exists(rtrim($this->cacheDir, '/') . '/' . $audio['id'] . '.mp3')) {
                 $audio = $this->db->getSampleAudio();
             }
         }
         if (!$audio) {
-            $responseBody = $this->generate($phrase['text']);
+            $responseBody = $this->generate($phrase['text'], $voiceId);
             $decoded = json_decode($responseBody, true);
             if ($decoded === null || !isset($decoded['audio_base64'])) {
                 throw new Exception("Unexpected response shape: {$responseBody}");
@@ -50,8 +48,8 @@ class TextToSpeech {
             $normalizedAlignment = $decoded['normalized_alignment'] ?? null;
             if ($alignment) $alignment = json_encode($alignment);
             if ($normalizedAlignment) $normalizedAlignment = json_encode($normalizedAlignment);
-            $this->db->insertAudio($phraseId, $this->voiceId, $this->speed, $alignment, $normalizedAlignment);
-            $audio = $this->db->getAudio($phraseId, $this->voiceId, $this->speed);
+            $this->db->insertAudio($phraseId, $voiceId, $this->speed, $alignment, $normalizedAlignment);
+            $audio = $this->db->getAudio($phraseId, $voiceId, $this->speed);
             if (!$audio) {
                 throw new Exception("Failed to insert audio record");
             }
@@ -71,8 +69,8 @@ class TextToSpeech {
         return $audio;
     }
 
-    private function generate(string $text): string {
-        $url = "https://api.elevenlabs.io/v1/text-to-speech/{$this->voiceId}/with-timestamps";
+    private function generate(string $text, string $voiceId): string {
+        $url = "https://api.elevenlabs.io/v1/text-to-speech/{$voiceId}/with-timestamps";
 
         $payload = json_encode([
             'text' => $text,
